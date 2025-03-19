@@ -1,7 +1,7 @@
 import TopBar from "../Shared/Topbar"
 import { useState } from "react";
 
-function Dashboard() {
+function TempDashboard() {
   // Commented state variables preserved from original code
   // const [selectedContacts,setselectedContacts]=useState('Month');
   // const [selectedEvents,setselectedEvents]=useState('Month');
@@ -13,10 +13,10 @@ function Dashboard() {
   return (
     <div className='py-5 px-4 space-y-10'>
       <TopBar title="Overview"/>
-      
-      <div className='flex flex-col justify-between lg:flex-row gap-6 w-full'>
+
+      <div className='flex flex-col lg:flex-row gap-6 w-full'>
         {/* Left card - My Information */}
-        <div className="w-2xl">
+        <div className="w-full lg:w-1/2">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">My Information</h2>
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-4 md:p-6 text-white">
             <div className="mb-4 md:mb-6">
@@ -40,7 +40,7 @@ function Dashboard() {
         </div>
 
         {/* Right card - Recent Quiz Attempts */}
-        <div className="w-full lg:w-1/3">
+        <div className="w-full lg:w-1/2">
           <h3 className='text-[#2D60FF] font-semibold text-xl md:text-2xl'>Recent Quiz Attempts</h3>
           <div className='rounded-3xl mt-4 md:mt-6 bg-[#F5F5F5] p-4 md:p-5 flex flex-col'>
             <div> 
@@ -70,4 +70,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default TempDashboard

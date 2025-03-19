@@ -7,6 +7,7 @@ import Career from "./Components/User/Career"
 import StudyMaterial from "./Components/User/StudyMaterial"
 import JobInternship from "./Components/User/JobInternship"
 import Feedback from "./Components/User/Feedback"
+import StudentDashboard from "./Components/User/TempDashboard"
 
 function App() {
 
@@ -15,8 +16,8 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path='/' element={<Dashboard />} />    
-            <Route path='/courses' element={<Courses />} />    
+            <Route path='/' element={<StudentDashboard />} />    
+            <Route path='/courses' element={<Dashboard />} />    
             <Route path='/account' element={<Account />} />    
             <Route path='/career' element={<Career />} />    
             <Route path='/study-material' element={<StudyMaterial />} />    

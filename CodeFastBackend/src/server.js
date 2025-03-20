@@ -6,7 +6,7 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 //middleware
-// const protect = require("./middleware/AuthMiddleware");
+const protect = require("./middleware/AuthMiddleware");
 
 //routes
 const authRouter = require("./routes/AuthRoutes");
@@ -24,7 +24,7 @@ app.use(cors(
 app.get("/", async (req, res) => {
   res.send("Hello, World!");
 });
-app.use("/api/student", userRouter);
+app.use("/api/user", protect, userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/course", courseRouter);
 

@@ -130,6 +130,48 @@ function Dashboard() {
           </div>
         </div>
       </div>
+      <div className="flex  flex-col lg:flex-row gap-4">
+        <div className="space-y-4 bg-gray-50 px-4  ">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Quizes</h2>
+              <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 w-2xl">
+                <div className="bg-yellow-100 p-3 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">Data Structures</p>
+                  <p className="text-sm text-gray-500">13 October 2024</p>
+                </div>
+                <div className="text-red-500 font-medium">-100</div>
+              </div>
+              <div className="flex items-center p-3 rounded-lg hover:bg-gray-50">
+                <div className="bg-blue-100 p-3 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">Algorithms</p>
+                  <p className="text-sm text-gray-500">10 September 2024</p>
+                </div>
+                <div className="text-green-500 font-medium">+123</div>
+              </div>
+              <div className="flex items-center p-3 rounded-lg hover:bg-gray-50">
+                <div className="bg-green-100 p-3 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">Database Systems</p>
+                  <p className="text-sm text-gray-500">1 January 2024</p>
+                </div>
+                <div className="text-green-500 font-medium">+101</div>
+              </div>
+            </div>
+
+      </div>
 
     </div>
   )

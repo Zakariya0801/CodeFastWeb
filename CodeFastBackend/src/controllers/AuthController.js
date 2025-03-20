@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const register = async (req, res) => {
     try {
         const { name,email, dob, university, 
-                password, cgpa, degree,  } = req.body;
+                password, cgpa, degree, profile_photo } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const student = new Student({
@@ -16,6 +16,7 @@ const register = async (req, res) => {
             email,
             dob,
             university,
+            picture: profile_photo
         });
         await student.save();
         res.status(201).json({ message: 'Student registered successfully', student });

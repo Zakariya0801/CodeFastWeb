@@ -9,7 +9,7 @@ const protect = async (req, res, next) => {
       const token = req.header("Authorization")?.replace("Bearer ", "");
       if (!token) {
         res
-          .status(403)
+          .status(401)
           .json({ message: "No token, authorization denied" });
         return;
       }
@@ -18,11 +18,11 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
   
       // Find user from token
-      let user = await Student.findById(decoded.userId).select("-password");
+      let user = await Student.findById(decoded.id).select("-password");
       if (!user) {
-        user = await Admin.findById(decoded.userId).select("-password");
+        user = await Admin.findById(decoded.id).select("-password");
         if (!user) {
-          user = await Industry.findById(decoded.userId).select("-password");
+          user = await Industry.findById(decoded.id).select("-password");
           if (!user) {
               res.status(404).json({ message: "User not found" });
               return;
@@ -35,7 +35,7 @@ const protect = async (req, res, next) => {
       next();
     } catch (error) {
       console.log("error = ", error)
-      res.status(403).json({ message: "Token is not valid" });
+      res.status(401).json({ message: "Token is not valid" });
     }
   };
 

@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const getAllStudents = async (req, res) => {
     try {
-        const student = await Student.findById(req.params.id);
+        const student = await Student.find();
         if (!student) return res.status(404).json({ message: 'Student not found' });
         res.json(student);
     } catch (error) {
@@ -67,11 +67,23 @@ const applyJob = async (req, res) => {
     }
 }
 
+const CurrentUser = async (req, res) => {
+    try {
+        const user = req.user;
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json({user});
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     getAllStudents,
     getStudentbyId,
     updateStudent,
     deleteStudent,
     subscribePlan,
-    applyJob
+    applyJob,
+    CurrentUser
 };

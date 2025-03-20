@@ -69,11 +69,12 @@ const applyJob = async (req, res) => {
 
 const CurrentUser = async (req, res) => {
     try {
+        console.log("hrerer")
         const user = req.user;
-
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({user});
     } catch (error) {
+        console.log("error = ", error)
         res.status(500).json({ error: error.message });
     }
 }

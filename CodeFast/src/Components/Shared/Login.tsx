@@ -1,6 +1,10 @@
 import  { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'react-feather';
+import axiosInstance from '../../Utils/axiosInstance';
+import { toast } from 'react-toastify';
+import authService from '../Auth/authService';
+import { useGlobalContext } from '../Auth/GlobalProvider';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,11 +21,27 @@ const Login = () => {
       [name]: type === 'checkbox' ? checked : value
     });
   };
-
-  const handleSubmit = (e:any) => {
+  const { setUser } = useGlobalContext();
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
     // Handle login logic here
-    console.log('Login submitted:', formData);
+    try {
+      const response = await authService.login({ email:formData.email, password:formData.password });
+
+      // Navigate based on user role
+      if (response.token) {
+        const userResponse = await axiosInstance.get("/user/me");
+        setUser(userResponse.data);
+        toast.success("Login successful");
+        navigate("/");
+      }
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
+    }
   };
 
   return (
@@ -102,7 +122,7 @@ const Login = () => {
             Sign in
           </button>
         </form>
-
+        <p className="text-red-500 text-sm text-center">{error}</p>
         <div className="text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}

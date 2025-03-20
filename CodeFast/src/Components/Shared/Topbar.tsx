@@ -36,10 +36,10 @@ export default function TopBar({title}: ITopbar) {
             {/* Right section */}
             <div className="flex items-center gap-4">
                 <button className="rounded-lg p-2 text-gray-500 hover:bg-gray-100">
-                <SettingsIcon className="h-5 w-5" />
+                    <SettingsIcon className="h-5 w-5" />
                 </button>
                 <button className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100">
-                <BellIcon className="h-5 w-5" />
+                    <BellIcon className="h-5 w-5" />
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
                 </button>
                 <button className="flex items-center gap-2">

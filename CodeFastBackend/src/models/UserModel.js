@@ -40,9 +40,20 @@ const StudentSchema = new mongoose.Schema({
         default: ''
     },
     Jobs: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job'
+        job:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Job'
+        },
+        status:{
+            type: Number,
+            default: 0,
+            enum: [0,1,2]
+        }
     }],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 }, { timestamps: true });
 
 const Student = mongoose.model('Student', StudentSchema);

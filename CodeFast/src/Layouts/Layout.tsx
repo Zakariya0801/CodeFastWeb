@@ -9,7 +9,7 @@ export default function Layout ({ children }: { children: React.ReactNode }) {
     return (
       <div className='flex w-full'>
         {
-          (location.pathname!=="/login")&&
+          (location.pathname!=="/login" && location.pathname!=="/signup")&&
           <Sidebar route={(Paths[location.pathname as keyof typeof Paths] ? location.pathname : "/") as keyof typeof Paths} />
         }
 

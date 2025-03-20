@@ -1,31 +1,12 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 import LineGraphComponent from "../Shared/Graphs/LineGraphComponent"
 import TopBar from "../Shared/Topbar"
-import axiosInstance from "../../Utils/axiosInstance"
-import { useEffect, useState } from "react"
+import { useGlobalContext } from "../Auth/GlobalProvider"
 
-interface IUser{
-  name: string;
-  degree: string;
-  cgpa: number;
-  email: string;
-  university: string;
-}
 function Dashboard() {
   // Commented state variables preserved from original code
-  const [userInfo, setUserInfo] = useState<IUser>();
-  const getUserInfo = async () => {
-    try {
-      const response = await axiosInstance.get("/student/");
-      setUserInfo(response.data[0]);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  useEffect(() => {
-    getUserInfo();
-  },[]);
-
+  const {user} = useGlobalContext();
+  console.log(user)
   const lineData = [
     { "Day" : "Monday", "SPerformance": 3.5},
     { "Day" : "Tuesday", "SPerformance": 3.5},
@@ -71,21 +52,21 @@ function Dashboard() {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-4 md:p-6 text-white">
             <div className="mb-4 md:mb-6">
               <p className="text-xs text-blue-200">Name</p>
-              <p className="text-lg md:text-xl font-bold">{userInfo?.name}</p>
+              <p className="text-lg md:text-xl font-bold">{user?.name}</p>
             </div>
             <div className="flex justify-between mb-4 md:mb-6">
               <div>
                 <p className="text-xs text-blue-200">Degree</p>
-                <p className="text-sm md:text-base font-medium">{userInfo?.degree}</p>
+                <p className="text-sm md:text-base font-medium">{user?.degree}</p>
               </div>
               <div>
                 <p className="text-xs text-blue-200">CGPA</p>
-                <p className="text-sm md:text-base font-medium">{userInfo?.cgpa}</p>
+                <p className="text-sm md:text-base font-medium">{user?.cgpa}</p>
               </div>
             </div>
             <div>
               <p className="text-xs text-blue-200">University</p>
-              <p className="text-sm md:text-base font-medium">{userInfo?.university}</p>
+              <p className="text-sm md:text-base font-medium">{user?.university}</p>
             </div>
           </div>
         </div>

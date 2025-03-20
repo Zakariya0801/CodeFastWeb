@@ -25,6 +25,7 @@ const authService = {
 
   logout: () => {
     localStorage.removeItem("token");
+    
   },
 
   signup: async (data: SignupData) => {

@@ -4,6 +4,8 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { Pencil, CheckCircle } from "lucide-react"
+import authService from "../Auth/authService"
+import { useNavigate } from "react-router-dom"
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<string>("edit-profile")
@@ -183,6 +185,7 @@ const Settings = () => {
       reader.readAsDataURL(file)
     }
   }
+  const navigate = useNavigate();
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative">
@@ -389,7 +392,16 @@ const Settings = () => {
         )}
 
         {/* Save Button */}
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-between">
+          <button
+            className="px-6 py-2 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            onClick={() => {
+              authService.logout()
+              navigate("/login")
+            }}
+          >
+            Logout
+          </button>
           <button
             type="submit"
             className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"

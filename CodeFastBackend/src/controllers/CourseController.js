@@ -52,6 +52,7 @@ const AddCourse = async (req,res) => {
     }
 }
 
+
 module.exports = {
     getAllCourse,
     getCoursebyId,

@@ -1,11 +1,13 @@
 import { BellIcon, SearchIcon, SettingsIcon } from "lucide-react"
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ITopbar{
     title: string;
 }
 
 export default function TopBar({title}: ITopbar) {
+    const navigate = useNavigate()
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
     useEffect(() => {
         const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
@@ -35,8 +37,8 @@ export default function TopBar({title}: ITopbar) {
 
             {/* Right section */}
             <div className="flex items-center gap-4">
-                <button className="rounded-lg p-2 text-gray-500 hover:bg-gray-100">
-                <SettingsIcon className="h-5 w-5" />
+                <button className="rounded-lg p-2 text-gray-500 hover:bg-gray-100" onClick={()=>navigate("/settings")}>
+                <SettingsIcon className="h-5 w-5"/>
                 </button>
                 <button className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100">
                 <BellIcon className="h-5 w-5" />

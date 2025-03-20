@@ -8,7 +8,8 @@ import Feedback from "./Components/User/Feedback"
 import StudentDashboard from "./Components/User/TempDashboard"
 import Login from "./Components/Shared/Login"
 import Signup from "./Components/Shared/Signup"
-import { Settings } from "lucide-react"
+import Settings from "./Components/Shared/Settings"
+
 
 function App() {
 

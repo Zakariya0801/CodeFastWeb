@@ -7,8 +7,10 @@ import JobInternship from "./Components/User/JobInternship"
 import Feedback from "./Components/User/Feedback"
 import Login from "./Components/Shared/Login"
 import Signup from "./Components/Shared/Signup"
-import { Settings } from "lucide-react"
+import Settings from "./Components/Shared/Settings"
 import Courses from "./Components/User/Courses"
+
+
 
 function App() {
 

@@ -1,9 +1,10 @@
 "use client"
 
+import type React from "react"
+
 import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom" // Import useNavigate
 import { Eye, EyeOff, UserPlus } from "react-feather"
-import { University } from "lucide-react"
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -14,7 +15,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     dob: "",
-    permanentAddress: "",
+    profilePicture: "", // Changed from permanentAddress
     degree: "",
     cgpa: "",
     university: "",
@@ -26,13 +27,14 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     dob: "",
-    permanentAddress: "",
+    profilePicture: "", // Changed from permanentAddress
     degree: "",
     cgpa: "",
     university: "",
     agreeTerms: "",
   }) // To store validation errors
   const navigate = useNavigate() // Hook for navigation
+  const [profilePreview, setProfilePreview] = useState<string | null>(null)
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target
@@ -44,20 +46,19 @@ const Signup = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }))
   }
 
-  const validateForm = () => {      
-      
+  const validateForm = () => {
     const newErrors = {
       fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
       dob: "",
-      permanentAddress: "",
+      profilePicture: "", // Changed from permanentAddress
       degree: "",
       cgpa: "",
       university: "",
       agreeTerms: "",
-  }
+    }
 
     // Check if all fields are filled
     if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required"
@@ -65,7 +66,7 @@ const Signup = () => {
     if (!formData.password.trim()) newErrors.password = "Password is required"
     if (!formData.confirmPassword.trim()) newErrors.confirmPassword = "Confirm Password is required"
     if (!formData.dob.trim()) newErrors.dob = "Date of Birth is required"
-    if (!formData.permanentAddress.trim()) newErrors.permanentAddress = "Permanent Address is required"
+    if (!formData.profilePicture.trim()) newErrors.profilePicture = "Profile Picture is required" // Changed from permanentAddress
     if (!formData.degree.trim()) newErrors.degree = "Degree is required"
     if (!formData.cgpa.trim()) newErrors.cgpa = "CGPA is required"
     if (!formData.university.trim()) newErrors.university = "University is required"
@@ -77,7 +78,7 @@ const Signup = () => {
     }
 
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0 // Return true if no errors
+    return !Object.values(newErrors).some((error) => error !== "") // Return true if no errors
   }
 
   const handleSubmit = (e: any) => {
@@ -95,12 +96,33 @@ const Signup = () => {
     navigate("/login")
   }
   const [selectedValue, setSelectedValue] = useState("")
-    const inputref = useRef<HTMLSelectElement>(null);
-    const handleChangeinDrop = (e: any) => {
-        console.log(e.target.value)
-      setSelectedValue(e.target.value)
-      setFormData({ ...formData, university: e.target.value }) // Update formData with selected university
+  const inputref = useRef<HTMLSelectElement>(null)
+  const handleChangeinDrop = (e: any) => {
+    console.log(e.target.value)
+    setSelectedValue(e.target.value)
+    setFormData({ ...formData, university: e.target.value }) // Update formData with selected university
+  }
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Store the file name or path in formData
+      setFormData({
+        ...formData,
+        profilePicture: file.name,
+      })
+
+      // Create a preview URL
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setProfilePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+
+      // Clear any errors
+      setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
     }
+  }
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Main Content */}
@@ -168,22 +190,34 @@ const Signup = () => {
                   {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
                 </div>
 
-                {/* Permanent Address */}
+                {/* Profile Picture */}
                 <div className="mb-5">
-                  <label htmlFor="permanentAddress" className="block text-sm font-medium text-gray-700 mb-1">
-                    Permanent Address
+                  <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700 mb-1">
+                    Profile Picture
                   </label>
-                  <input
-                    type="text"
-                    id="permanentAddress"
-                    name="permanentAddress"
-                    value={formData.permanentAddress}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="123 Main St, City, Country"
-                    required
-                  />
-                  {errors.permanentAddress && <p className="text-red-500 text-sm mt-1">{errors.permanentAddress}</p>}
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        id="profilePicture"
+                        name="profilePicture"
+                        accept="image/*"
+                        onChange={handleProfilePictureChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                    {profilePreview && (
+                      <div className="h-16 w-16 rounded-full overflow-hidden border border-gray-300">
+                        <img
+                          src={profilePreview || "/placeholder.svg"}
+                          alt="Profile preview"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {errors.profilePicture && <p className="text-red-500 text-sm mt-1">{errors.profilePicture}</p>}
                 </div>
 
                 {/* Degree */}
@@ -231,21 +265,21 @@ const Signup = () => {
                     University
                   </label>
                   <select
-                        value={selectedValue}
-                        ref={inputref}
-                        onChange={handleChangeinDrop}
-                        aria-placeholder="Select University"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value=""></option>
+                    value={selectedValue}
+                    ref={inputref}
+                    onChange={handleChangeinDrop}
+                    aria-placeholder="Select University"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value=""></option>
 
-                        <option value="National University of Computing and Emerging Sciences">
-                        National University of Computing and Emerging Sciences
-                        </option>
-                        <option value="NUST">NUST</option>
-                        <option value="COMSATS">COMSATS</option>
-                        <option value="Bahria University">Bahria University</option>
-                    </select>
+                    <option value="National University of Computing and Emerging Sciences">
+                      National University of Computing and Emerging Sciences
+                    </option>
+                    <option value="NUST">NUST</option>
+                    <option value="COMSATS">COMSATS</option>
+                    <option value="Bahria University">Bahria University</option>
+                  </select>
                   {errors.university && <p className="text-red-500 text-sm mt-1">{errors.university}</p>}
                 </div>
 

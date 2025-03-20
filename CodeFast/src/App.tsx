@@ -5,10 +5,11 @@ import Account from "./Components/User/Account"
 import StudyMaterial from "./Components/User/StudyMaterial"
 import JobInternship from "./Components/User/JobInternship"
 import Feedback from "./Components/User/Feedback"
-import StudentDashboard from "./Components/User/TempDashboard"
 import Login from "./Components/Shared/Login"
 import Signup from "./Components/Shared/Signup"
 import Settings from "./Components/Shared/Settings"
+import Courses from "./Components/User/Courses"
+
 
 
 function App() {
@@ -18,10 +19,10 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path='/' element={<StudentDashboard />} />    
+            <Route path='/' element={<Dashboard />} />    
             <Route path='/login' element={<Login />} />    
             <Route path='/signup' element={<Signup />} />    
-            <Route path='/courses' element={<Dashboard />} />    
+            <Route path='/courses' element={<Courses />} />    
             <Route path='/account' element={<Account />} />    
             <Route path='/career' element={<Signup />} />    
             <Route path='/study-material' element={<StudyMaterial />} />    

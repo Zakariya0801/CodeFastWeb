@@ -6,7 +6,7 @@ const getAllStudents = async (req, res) => {
     try {
         const student = await Student.find();
         if (!student) return res.status(404).json({ message: 'Student not found' });
-        res.json(student);
+        res.status(200).json(student);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -16,7 +16,7 @@ const getStudentbyId = async (req, res) => {
     try {
         const student = await Student.findById(req.params.id);
         if (!student) return res.status(404).json({ message: 'Student not found' });
-        res.json(student);
+        res.status(200).json(student);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -25,7 +25,7 @@ const getStudentbyId = async (req, res) => {
 const updateStudent = async (req, res) => {
     try {
         const updatedStudent = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(updatedStudent);
+        res.status(200).json(updatedStudent);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -34,7 +34,7 @@ const updateStudent = async (req, res) => {
 const deleteStudent = async (req, res) => {
     try {
         await Student.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Student deleted successfully' });
+        res.status(200).json({ message: 'Student deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -47,7 +47,7 @@ const subscribePlan = async (req, res) => {
 
         student.subscribedPlan = 1;
         await student.save();
-        res.json({ message: 'Subscribed successfully', student });
+        res.status(200).json({ message: 'Subscribed successfully', student });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -61,7 +61,7 @@ const applyJob = async (req, res) => {
 
         student.Jobs.push({ job: jobId, status: 0 });
         await student.save();
-        res.json({ message: 'Applied for job successfully', student });
+        res.status(200).json({ message: 'Applied for job successfully', student });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -72,7 +72,7 @@ const CurrentUser = async (req, res) => {
         const user = req.user;
 
         if (!user) return res.status(404).json({ message: 'User not found' });
-        res.json({user});
+        res.status(200).json({user});
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

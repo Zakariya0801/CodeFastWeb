@@ -9,6 +9,7 @@ interface IUser{
   degree: string;
   cgpa: number;
   email: string;
+  university: string;
 }
 function Dashboard() {
   // Commented state variables preserved from original code
@@ -75,15 +76,16 @@ function Dashboard() {
             <div className="flex justify-between mb-4 md:mb-6">
               <div>
                 <p className="text-xs text-blue-200">Degree</p>
-                <p className="text-sm md:text-base font-medium">Bachelors in Computer Science</p>
+                <p className="text-sm md:text-base font-medium">{userInfo?.degree}</p>
               </div>
               <div>
                 <p className="text-xs text-blue-200">CGPA</p>
-                <p className="text-sm md:text-base font-medium">3.85</p>
+                <p className="text-sm md:text-base font-medium">{userInfo?.cgpa}</p>
               </div>
             </div>
             <div>
-              <p className="text-xl md:text-2xl font-bold">Data Scientist</p>
+              <p className="text-xs text-blue-200">University</p>
+              <p className="text-sm md:text-base font-medium">{userInfo?.university}</p>
             </div>
           </div>
         </div>

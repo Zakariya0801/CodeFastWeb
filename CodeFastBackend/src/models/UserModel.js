@@ -54,6 +54,9 @@ const StudentSchema = new mongoose.Schema({
             enum: [0,1,2]
         }
     }],
+    university:{
+        type:String,
+    },
     createdAt: {
         type: Date,
         default: Date.now

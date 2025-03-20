@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 
-const LineGraphComponent = ({ data, dataKey, lineDataKey_y }) => {
+interface LineGraphComponentProps {
+  data: any[];
+  dataKey: string;
+}
+const LineGraphComponent = ({ data, dataKey }
+  :LineGraphComponentProps) => {
   const [chartHeight, setChartHeight] = useState(400);
   const [chartWidth, setChartWidth] = useState("100%");
 
@@ -29,7 +34,7 @@ const LineGraphComponent = ({ data, dataKey, lineDataKey_y }) => {
           <XAxis dataKey={dataKey} />
           <YAxis 
             label={{ 
-              value: lineDataKey_y, 
+              value: "SPerformace", 
               angle: -90, 
               position: 'insideLeft', 
               style: { textAnchor: 'middle' }
@@ -37,7 +42,7 @@ const LineGraphComponent = ({ data, dataKey, lineDataKey_y }) => {
           />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey={lineDataKey_y} stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey={"SPerformance"} stroke="#8884d8" activeDot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
     </div>

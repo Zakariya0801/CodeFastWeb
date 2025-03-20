@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom" // Import useNavigate
 import { Eye, EyeOff, UserPlus } from "react-feather"
 import { University } from "lucide-react"
@@ -94,34 +94,13 @@ const Signup = () => {
     // Redirect to the Login Page after successful submission
     navigate("/login")
   }
-
-  const Dropdown = () => {
-    const [selectedValue, setSelectedValue] = useState("")
-
-    const handleChange = (e: any) => {
+  const [selectedValue, setSelectedValue] = useState("")
+    const inputref = useRef<HTMLSelectElement>(null);
+    const handleChangeinDrop = (e: any) => {
+        console.log(e.target.value)
       setSelectedValue(e.target.value)
       setFormData({ ...formData, university: e.target.value }) // Update formData with selected university
     }
-
-    return (
-      <select
-        value={selectedValue}
-        onChange={handleChange}
-        aria-placeholder="Select University"
-        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {/* <option value="">Select University</option> */}
-
-        <option value="National University of Computing and Emerging Sciences">
-          National University of Computing and Emerging Sciences
-        </option>
-        <option value="NUST">NUST</option>
-        <option value="COMSATS">COMSATS</option>
-        <option value="Bahria University">Bahria University</option>
-      </select>
-    )
-  }
-
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Main Content */}
@@ -251,7 +230,22 @@ const Signup = () => {
                   <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-1">
                     University
                   </label>
-                  <Dropdown />
+                  <select
+                        value={selectedValue}
+                        ref={inputref}
+                        onChange={handleChangeinDrop}
+                        aria-placeholder="Select University"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value=""></option>
+
+                        <option value="National University of Computing and Emerging Sciences">
+                        National University of Computing and Emerging Sciences
+                        </option>
+                        <option value="NUST">NUST</option>
+                        <option value="COMSATS">COMSATS</option>
+                        <option value="Bahria University">Bahria University</option>
+                    </select>
                   {errors.university && <p className="text-red-500 text-sm mt-1">{errors.university}</p>}
                 </div>
 

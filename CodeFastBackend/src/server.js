@@ -11,7 +11,7 @@ const protect = require("./middleware/AuthMiddleware");
 //routes
 const authRouter = require("./routes/AuthRoutes");
 const userRouter = require("./routes/UserRoutes");
-
+const courseRouter = require("./routes/CourseRoutes");
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
@@ -26,6 +26,7 @@ app.get("/", async (req, res) => {
 });
 app.use("/api/user", protect, userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/course", courseRouter);
 
 
 ///////////////////////////////////////////////////

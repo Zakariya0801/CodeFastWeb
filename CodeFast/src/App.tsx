@@ -12,6 +12,8 @@ import Courses from "./Components/User/Courses"
 import GlobalProvider from "./Components/Auth/GlobalProvider"
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthGuard } from "./Utils/authGuard"
+import Career from "./Components/User/Career"
 
 function App() {
 
@@ -20,6 +22,7 @@ function App() {
       <GlobalProvider>
         <ToastContainer />
         <Router>
+          <AuthGuard />
           <Layout>
             <Routes>
               <Route path='/' element={<Dashboard />} />    
@@ -27,7 +30,7 @@ function App() {
               <Route path='/signup' element={<Signup />} />    
               <Route path='/courses' element={<Courses />} />    
               <Route path='/account' element={<Account />} />    
-              <Route path='/career' element={<Signup />} />    
+              <Route path='/career' element={<Career />} />    
               <Route path='/study-material' element={<StudyMaterial />} />    
               <Route path='/job-internship' element={<JobInternship />} />    
               <Route path='/feedback' element={<Feedback />} />    

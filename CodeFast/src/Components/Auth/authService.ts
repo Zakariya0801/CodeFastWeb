@@ -40,15 +40,31 @@ const authService = {
 
 
   isAuthenticated: () => {
-    return localStorage.getItem("token") !== null;
+      const token = localStorage.getItem("token");
+    
+      if (!token) return false; // No token found, consider it expired
+    
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
+        const exp = payload.exp; 
+        console.log("exp = ", exp)
+        if (!exp) return false; // If no exp field, consider expired
+        console.log("val = ", Date.now() >= exp * 1000)
+        return Date.now() < exp * 1000; // Convert to milliseconds and compare
+      } catch (error) {
+        console.error("Invalid token format:", error);
+        return false; // If decoding fails, assume expired
+      }
+    
   },
 
   getToken: () => {
     return localStorage.getItem("token");
   },
 
-  getRole: () => {
-    return localStorage.getItem("role");
+  getRole: async () => {
+    const res = await axiosInstance.get("/user/role");
+    return res.data.role;
   },
 };
 

@@ -5,11 +5,26 @@ import type React from "react"
 import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom" // Import useNavigate
 import { Eye, EyeOff, UserPlus } from "react-feather"
+import axiosInstance from "../../Utils/axiosInstance"
+import { uploadImage } from "../../Utils/Cloudinary"
+
+interface FormData{
+  fullName: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  dob: string,
+  profilePicture: string,
+  degree: string,
+  cgpa: string,
+  university: string,
+  agreeTerms: boolean
+}
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
     password: "",
@@ -81,13 +96,31 @@ const Signup = () => {
     return !Object.values(newErrors).some((error) => error !== "") // Return true if no errors
   }
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
 
     // Validate the form
     if (!validateForm()) {
       return // Stop submission if validation fails
     }
+
+    const data = new FormData();
+    data.append("name", formData.fullName);
+    data.append("email", formData.email);
+    data.append("dob", formData.dob);
+    data.append("university", formData.university);
+    data.append("password", formData.password);
+    data.append("cgpa", formData.cgpa.toString()); // Convert number to string
+    data.append("degree", formData.degree);
+    data.append("profilePicture", formData.profilePicture);
+
+    const response = await axiosInstance.post("/auth/register", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Student registered:", response.data);
 
     // Handle signup logic here (e.g., API call)
     console.log("Signup submitted:", formData)
@@ -107,9 +140,11 @@ const Signup = () => {
     const file = e.target.files?.[0]
     if (file) {
       // Store the file name or path in formData
+      uploadImage(file).then((url:string) => {
+
       setFormData({
         ...formData,
-        profilePicture: file.name,
+        profilePicture: url,
       })
 
       // Create a preview URL
@@ -121,6 +156,9 @@ const Signup = () => {
 
       // Clear any errors
       setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
+    }).catch((error) => {
+      setErrors((prevErrors) => ({ ...prevErrors, profilePicture: error.message }))
+    })
     }
   }
   return (
@@ -136,7 +174,7 @@ const Signup = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-8">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} method="POST">
                 {/* Full Name */}
                 <div className="mb-5">
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">

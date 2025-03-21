@@ -1,16 +1,25 @@
 // authGuard.ts
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import authService from "../Components/Auth/authService";
-import axiosInstance from "./axiosInstance";
+// import axiosInstance from "./axiosInstance";
 
 export function AuthGuard() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
-  const role = authService.getRole();
+  const [role, setRole] = useState<string | null>(null);
+  const getUserRole = async() => {
+    const r = await authService.getRole();
+    console.log(r)
+    setRole(r);
+  }
+
+  useEffect(() => {
+    getUserRole();
+  },[])
+
   const publicPaths = [
-    "/",
     "/login",
     "/signup",
     "/forgot-password",
@@ -27,15 +36,11 @@ export function AuthGuard() {
         }
         return;
       }
-
       // Handle protected routes
       if (!isAuthenticated) {
         navigate("/login");
       } else {
-        const allowed = await isRouteAllowed(location.pathname, role);
-        if (!allowed) {
-          navigateByRole(role, navigate);
-        }
+        // navigateByRole(role, navigate);
       }
     };
 
@@ -47,40 +52,17 @@ export function AuthGuard() {
 
 function navigateByRole(role: string | null, navigate: (path: string) => void) {
   switch (role) {
-    case "superadmin":
-      navigate("/superadmin");
-      break;
-    case "admin":
+    case "Admin":
       navigate("/admin");
       break;
-    case "user":
-      navigate("/user");
+    case "Student":
+      navigate("/student");
+      break;
+    case "Industry":
+      navigate("/industry");
       break;
     default:
       navigate("/login");
   }
 }
 
-async function isRouteAllowed(
-  pathname: string,
-  role: string | null
-): Promise<boolean> {
-  if (!role) return false;
-  const token = localStorage.getItem("token");
-  try {
-    const user = await axiosInstance.get("/user/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (user.data.role !== role) {
-      //set the role in local storage
-      localStorage.setItem("role", user.data.role);
-      return false;
-    }
-    return pathname.startsWith(`/${role.toLowerCase()}`);
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    return false;
-  }
-}

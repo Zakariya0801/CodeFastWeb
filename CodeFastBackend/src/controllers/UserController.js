@@ -80,9 +80,9 @@ const CurrentUser = async (req, res) => {
 }
 const CurrentRole = async (req, res) => {
     try {
-        const user = req.rolw;
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        res.status(200).json({user});
+        const role = req.role;
+        if (!role) return res.status(404).json({ message: 'User not found' });
+        res.status(200).json({role});
     } catch (error) {
         console.log("error = ", error)
         res.status(500).json({ error: error.message });

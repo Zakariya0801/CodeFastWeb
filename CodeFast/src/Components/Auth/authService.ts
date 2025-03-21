@@ -19,6 +19,7 @@ const authService = {
     const response = await axiosInstance.post("/auth/login", credentials);
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", response.data.user);
     }
     return response.data;
   },
@@ -60,6 +61,10 @@ const authService = {
 
   getToken: () => {
     return localStorage.getItem("token");
+  },
+  getUser: async () => {
+    const res = await axiosInstance.get("/user/me");
+    return res.data.user;
   },
 
   getRole: async () => {

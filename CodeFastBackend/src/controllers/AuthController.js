@@ -9,13 +9,8 @@ const register = async (req, res) => {
                 password, cgpa, degree, profile_photo } = req.body;
         const studentExists = await Student.findOne({ email });
         if (studentExists) return res.status(400).json({ message: 'Student already exists' });
-        console.log(req.body)
         const hashedPassword = await bcrypt.hash(password, 10);
-        if(!req.file){
-            console.log("trueee")
-            return res.status(400).json({ message: 'Please upload a profile photo' });
-        } 
-        console.log("here")
+       
         const student = new Student({
             name,
             password: hashedPassword,
@@ -29,6 +24,7 @@ const register = async (req, res) => {
         await student.save();
         res.status(201).json({ message: 'Student registered successfully', student });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: error.message });
     }
 };

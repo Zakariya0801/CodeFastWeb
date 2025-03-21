@@ -32,7 +32,7 @@ export function AuthGuard() {
       // Handle public routes
       if (publicPaths.includes(location.pathname)) {
         if (isAuthenticated && location.pathname === "/login") {
-          navigateByRole(role, navigate);
+          // navigateByRole(role, navigate);
         }
         return;
       }

@@ -1,6 +1,7 @@
 import { BellIcon, SearchIcon, SettingsIcon } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../Auth/GlobalProvider";
 
 interface ITopbar{
     title: string;
@@ -14,6 +15,20 @@ export default function TopBar({title}: ITopbar) {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
       }, []);
+    const [pic, setPic] = useState("");
+    const {user} = useGlobalContext();
+    const getPic = async () => {
+        const pi = await fetch(`${user?.picture}`);
+        console.log("pic = ", pi)
+        setPic(pi.url);
+        return pi;
+    }
+    
+    useEffect(() => {
+        // setuser(getCurr());
+        getPic();
+    }, []);
+
     return (
         <header className="flex w-full h-18 items-center justify-between border-b border-gray-200 bg-white px-4">
         {/* Left section */}
@@ -46,7 +61,7 @@ export default function TopBar({title}: ITopbar) {
                 </button>
                 <button className="flex items-center gap-2">
                 <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-Gq6iuNA3nbvVsOjwq4aV2hUIjBlAlC.png"
+                    src={pic}
                     alt="User avatar"
                     className="h-8 w-8 rounded-lg object-cover"
                 />

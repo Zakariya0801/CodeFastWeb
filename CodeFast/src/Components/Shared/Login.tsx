@@ -33,7 +33,9 @@ const Login = () => {
       // Navigate based on user role
       if (response.token) {
         const userResponse = await axiosInstance.get("/user/me");
+        console.log("USER RESPONSE", userResponse.data.user);
         setUser(userResponse.data.user);
+        
         toast.success("Login successful");
         navigate("/");
       }

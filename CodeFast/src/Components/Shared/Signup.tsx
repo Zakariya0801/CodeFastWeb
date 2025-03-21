@@ -104,21 +104,18 @@ const Signup = () => {
       return // Stop submission if validation fails
     }
 
-    const data = new FormData();
-    data.append("name", formData.fullName);
-    data.append("email", formData.email);
-    data.append("dob", formData.dob);
-    data.append("university", formData.university);
-    data.append("password", formData.password);
-    data.append("cgpa", formData.cgpa.toString()); // Convert number to string
-    data.append("degree", formData.degree);
-    data.append("profilePicture", formData.profilePicture);
+    const data = {
+      name: formData.fullName,
+      email: formData.email,
+      dob: formData.dob,
+      university: formData.university,
+      password: formData.password,
+      cgpa: formData.cgpa,
+      degree: formData.degree,
+      profile_photo: formData.profilePicture,
+    }
 
-    const response = await axiosInstance.post("/auth/register", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axiosInstance.post("/auth/register", data);
 
     console.log("Student registered:", response.data);
 
@@ -142,21 +139,22 @@ const Signup = () => {
       // Store the file name or path in formData
       uploadImage(file).then((url:string) => {
 
-      setFormData({
-        ...formData,
-        profilePicture: url,
-      })
+        setFormData({
+          ...formData,
+          profilePicture: url,
+        })
 
-      // Create a preview URL
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfilePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        // Create a preview URL
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setProfilePreview(reader.result as string)
+        }
+        reader.readAsDataURL(file)
 
-      // Clear any errors
-      setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
+        // Clear any errors
+        setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
     }).catch((error) => {
+      console.log("Error uploading image:", error.message)
       setErrors((prevErrors) => ({ ...prevErrors, profilePicture: error.message }))
     })
     }

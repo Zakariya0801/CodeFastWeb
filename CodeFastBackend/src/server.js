@@ -6,7 +6,7 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 //middleware
-const protect = require("./middleware/AuthMiddleware");
+const {protect} = require("./middleware/AuthMiddleware");
 
 //routes
 const authRouter = require("./routes/AuthRoutes");
@@ -26,7 +26,7 @@ app.get("/", async (req, res) => {
 });
 app.use("/api/user", protect, userRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/course", courseRouter);
+app.use("/api/course", protect, courseRouter);
 
 
 ///////////////////////////////////////////////////

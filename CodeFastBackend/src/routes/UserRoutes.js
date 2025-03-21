@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {getAllStudents, getStudentbyId, updateStudent, deleteStudent, subscribePlan, applyJob, CurrentUser} = require('../controllers/UserController');
+const {getAllStudents, getStudentbyId, updateStudent, deleteStudent, subscribePlan, applyJob, CurrentUser, CurrentRole} = require('../controllers/UserController');
 
 router.get('/', getAllStudents);
 router.get('/me', CurrentUser);
+router.get('/role', CurrentRole);
 router.get('/:id', getStudentbyId);
 router.put('/:id', updateStudent);
 router.delete('/:id', deleteStudent);

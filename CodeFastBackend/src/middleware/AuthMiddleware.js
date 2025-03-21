@@ -23,11 +23,17 @@ const protect = async (req, res, next) => {
         if (!user) {
           user = await Industry.findById(decoded.id).select("-password");
           if (!user) {
-              res.status(404).json({ message: "User not found" });
-              return;
+            res.status(404).json({ message: "User not found" });
+            return;
           }
+          else
+            req.role = "Industry";
         }
+        else
+          req.role = "Admin";
       }
+      else
+        req.role = "Student";
   
       // Add user to request object
       req.user = user;
@@ -39,4 +45,13 @@ const protect = async (req, res, next) => {
     }
   };
 
-  module.exports = protect;
+const authorize = (...roles) => {
+    return (req, res, next) => {
+      if (!roles.includes(req.role)) {
+        res.status(403).json({ message: "You are not authorized to access this route" });
+        return;
+      }
+      next();
+    };
+  };
+ module.exports = {protect, authorize};

@@ -34,7 +34,6 @@ const authService = {
     if (response.data.token) {
       // Store token and role after signup
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("role", response.data.role);
     }
     return response.data;
   },
@@ -46,6 +45,10 @@ const authService = {
 
   getToken: () => {
     return localStorage.getItem("token");
+  },
+
+  getRole: () => {
+    return localStorage.getItem("role");
   },
 };
 

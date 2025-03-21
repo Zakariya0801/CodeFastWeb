@@ -6,25 +6,13 @@ const quizSchema = new mongoose.Schema({
         required: true,
         ref: 'Course'
     },
-    totalMarks: {
-        type: Number,
+    name: {
+        type: String, 
         required: true
     },
-    Quiz:{
-        Questions:[{
-            question: {
-                type: String,
-                required: true
-            },
-            options: [{
-                type: String,
-                required: true
-            }],
-            correctOption: {
-                type: String,
-                required: true
-            }
-        }]
+    totalMarks: {
+        type: Number,
+        required: true,
     }
 }, { timestamps: true });
 

@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./config/connect");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const {createStudentEvaluation} = require("./controllers/EvaluationController")
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,10 +25,10 @@ app.use(cors(
 app.get("/", async (req, res) => {
   res.send("Hello, World!");
 });
-app.use("/api/user", userRouter);
+app.use("/api/user", protect, userRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/course", protect, courseRouter);
-
+app.use("/api/course", courseRouter);
+app.post("/evaluation", createStudentEvaluation);
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////

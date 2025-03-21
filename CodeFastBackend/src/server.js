@@ -24,7 +24,7 @@ app.use(cors(
 app.get("/", async (req, res) => {
   res.send("Hello, World!");
 });
-app.use("/api/user", protect, userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/course", protect, courseRouter);
 

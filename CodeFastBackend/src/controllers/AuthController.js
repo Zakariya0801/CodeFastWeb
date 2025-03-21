@@ -1,7 +1,7 @@
 const Student = require('../models/UserModel'); // Ensure correct path
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const {addPerformanceLog} = require('./SperformanceController')
 const register = async (req, res) => {
     try {
         const { name,email, dob, university, 
@@ -19,6 +19,7 @@ const register = async (req, res) => {
             picture: profile_photo
         });
         await student.save();
+        await addPerformanceLog(student._id, 0);
         res.status(201).json({ message: 'Student registered successfully', student });
     } catch (error) {
         res.status(500).json({ error: error.message });

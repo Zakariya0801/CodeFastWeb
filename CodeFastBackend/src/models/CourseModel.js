@@ -10,11 +10,7 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 250
-    },
-    Quizes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Quiz'
-    }]
+    }
 }, { timestamps: true });
 
 const Course = mongoose.model('Course', courseSchema);

@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./config/connect");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const {createStudentEvaluation} = require("./controllers/EvaluationController")
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.use("/api/university", universityRouter);
 app.use("/api/course", courseRouter);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/study-materials', studyMaterialRoutes);
+app.post("/evaluation", createStudentEvaluation);
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////

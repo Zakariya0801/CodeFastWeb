@@ -256,10 +256,14 @@ const removeQuestionFromQuiz = async (req, res) => {
 module.exports = {
     createQuiz,
     getAllQuizzes,
+<<<<<<< HEAD
     getQuizzesByCourse,
     getQuizById,
     updateQuiz,
     deleteQuiz,
     addQuestionToQuiz,
     removeQuestionFromQuiz
+=======
+    getQuizById
+>>>>>>> 044c034328bebf2de79f5997b491bd64ae1832f6
 };

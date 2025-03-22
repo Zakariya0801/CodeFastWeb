@@ -32,7 +32,7 @@ export function AuthGuard() {
       // Handle public routes
       if (publicPaths.includes(location.pathname)) {
         if (isAuthenticated && location.pathname === "/login") {
-          navigateByRole(role, navigate);
+          // navigateByRole(role, navigate);
         }
         return;
       }
@@ -40,7 +40,10 @@ export function AuthGuard() {
       if (!isAuthenticated) {
         navigate("/login");
       } else {
-        // navigateByRole(role, navigate);
+        if(checkRoutes(role!, location.pathname)){
+          return;
+        }
+        navigateByRole(role, navigate, "/");
       }
     };
 
@@ -49,17 +52,31 @@ export function AuthGuard() {
 
   return null;
 }
+function checkRoutes(role:string, pathname: string) {
+  //checks if Student is going to /student, Admin is going to /admin, Industry is going to /industry
+  if(role === "Student" && pathname.substring(0,8) !== "/student"){
+    return false;
+  }
+  if(role === "Admin" && pathname.substring(0,6) !== "/admin"){
+    return false;
+  }
+  if(role === "Industry" && pathname.substring(0,9) !== "/industry"){
+    return false;
+  }
+  return true;
+}
 
-function navigateByRole(role: string | null, navigate: (path: string) => void) {
+
+export function navigateByRole(role: string | null, navigate: (path: string) => void, path: string) {
   switch (role) {
     case "Admin":
-      navigate("/admin" );
+      navigate(`/admin${path}` );
       break;
     case "Student":
-      navigate("/student");
+      navigate(`/student${path}`);
       break;
     case "Industry":
-      navigate("/industry");
+      navigate(`/industry${path}`);
       break;
     default:
       navigate("/login");

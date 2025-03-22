@@ -22,7 +22,6 @@ const getCoursebyId = async (req, res) => {
 
 const AddCourse = async (req,res) => {
     try {
-<<<<<<< HEAD
         const {name,
             subtitle,
             description,
@@ -35,11 +34,6 @@ const AddCourse = async (req,res) => {
             subtitle,
             instructor,
             category
-=======
-        const {name} = req.body;
-        const course = new Course({
-            name
->>>>>>> 044c034328bebf2de79f5997b491bd64ae1832f6
         });
         await course.save();
         res.status(200).json({message: 'Course Added Succesfully',course});

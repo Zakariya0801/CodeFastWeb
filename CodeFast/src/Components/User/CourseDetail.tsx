@@ -9,9 +9,10 @@ import {Course, Quiz} from "./Courses"
 interface CourseDetailProps {
   course: Course
   onBackClick: () => void
+  onUnenroll: () => void
 }
 
-const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick }) => {
+const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnenroll }) => {
   const [activeTab, setActiveTab] = useState<"overview" | "lessons" | "quizzes" | "materials">("overview")
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz|null>(null)
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null)
@@ -188,7 +189,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick }) => {
               <div
                 key={index}
                 className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer flex justify-between items-center"
-                onClick={() => setSelectedQuiz(quiz)}
+                onClick={() => quiz.isAttempted ? "" : setSelectedQuiz(quiz)}
               >
                 <div>
                   <h3 className="font-medium">{quiz.title}</h3>
@@ -196,7 +197,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick }) => {
                     {quiz.Questions.length} questions • {quiz.Questions.length * 3} minutes
                   </p>
                 </div>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Start Quiz</button>
+                <button className={`px-4 py-2 bg-blue-600 text-white rounded-md ${quiz.isAttempted? "bg-red-600 disabled" : "bg-blue-600"} hover:bg-blue-700`}>Start Quiz</button>
               </div>
             ))}
           </div>
@@ -210,6 +211,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick }) => {
           onClick={() => {
             if (confirm("Are you sure you want to unenroll from this course?")) {
               alert("Course unenrolled successfully!")
+              onUnenroll();
               onBackClick()
             }
           }}

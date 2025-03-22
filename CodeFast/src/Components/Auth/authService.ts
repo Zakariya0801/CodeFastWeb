@@ -17,11 +17,28 @@ interface SignupData {
 const authService = {
   login: async (credentials: LoginCredentials) => {
     const response = await axiosInstance.post("/auth/login", credentials);
+    console.log("res[p = ", response.data)
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", response.data.user);
+      localStorage.setItem("role", response.data.role);
     }
     return response.data;
+  },
+  route: (path: string) =>{
+    switch (localStorage.getItem("role")) {
+      case "Admin":
+        return`/admin${path}`;
+        break;
+      case "Student":
+        return `/student${path}`;
+        break;
+      case "Industry":
+        return `/industry${path}`;
+        break;
+      default:
+        return path;
+    }
   },
 
   logout: () => {
@@ -53,9 +70,8 @@ const authService = {
     return res.data.user;
   },
 
-  getRole: async () => {
-    const res = await axiosInstance.get("/user/role");
-    return res.data.role;
+  getRole: () => {
+    return localStorage.getItem("role");
   },
 };
 

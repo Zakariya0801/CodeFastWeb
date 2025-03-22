@@ -4,6 +4,8 @@ import type React from "react"
 import { useState } from "react"
 import { ArrowLeft, CheckCircle, Clock, AlertCircle } from "lucide-react"
 import { Quiz } from "./Courses"
+import axiosInstance from "../../Utils/axiosInstance"
+import { toast } from "react-toastify"
 
 interface QuizDetailProps {
   quiz: Quiz
@@ -41,21 +43,33 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
     }
   }
 
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     // Calculate score
     let correctCount = 0
     selectedAnswers.forEach((answer, index) => {
+      answer++;
       if ( typeof answer === "number" && typeof quiz.Questions[index].correctOption === "number" && answer === quiz.Questions[index].correctOption) {
         correctCount++
       }
       else if ( typeof answer === "number" && typeof quiz.Questions[index].correctOption === "string" && answer.toString() === quiz.Questions[index].correctOption) {
         correctCount++
       }
+      else if ( typeof answer === "string" && typeof quiz.Questions[index].correctOption === "string" && answer === quiz.Questions[index].correctOption) {
+        correctCount++
+      }
+      else if ( typeof answer === "string" && typeof quiz.Questions[index].correctOption === "number" && answer === quiz.Questions[index].correctOption.toString()) {
+        correctCount++
+      }
     })
 
     const score = Math.round((correctCount / quiz.Questions.length) * 100)
 
-    alert(`Quiz completed!\nYour score: ${score}%\nCorrect answers: ${correctCount}/${quiz.Questions.length}`)
+    toast.info(`Quiz submitted successfully with score ${score}%\nCorrect answers: ${correctCount}/${quiz.Questions.length}`)
+    alert(`Quiz completed!\nYour score: ${score}%\nCorrect answers: ${correctCount}/${quiz.Questions.length}`);
+    await axiosInstance.post("/course/evaluation/", {
+      quizId: quiz._id, 
+      score
+    });
     setQuizStarted(false)
   }
 

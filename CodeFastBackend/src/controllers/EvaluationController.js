@@ -4,7 +4,8 @@ const Student = require('../models/UserModel.js');
 const { addPerformanceLog,getPerformanceLogs } = require('./SperformanceController');
 const createStudentEvaluation = async (req, res) => {
     try {
-        const { studentId, quizId, score } = req.body;
+        const { quizId, score } = req.body;
+        const studentId = req.user._id;
 
         // Fetch Student and Quiz
         const student = await Student.findById(studentId);
@@ -42,5 +43,15 @@ const createStudentEvaluation = async (req, res) => {
     }
 };
 
-module.exports = {createStudentEvaluation};
+const getStudentEvaluation = async (req, res) => {
+    try {
+        const studentId = req.user._id;
+        const evaluations = await Evaluation.find({ studentId });
+        res.status(200).json({ evaluations });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = {createStudentEvaluation, getStudentEvaluation};
     

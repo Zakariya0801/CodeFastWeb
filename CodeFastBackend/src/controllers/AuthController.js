@@ -1,4 +1,5 @@
 const Student = require('../models/UserModel'); // Ensure correct path
+const Admin = require('../models/AdminModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {addPerformanceLog} = require('./SperformanceController')
@@ -32,18 +33,34 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const student = await Student.findOne({ email });
-        if (!student) return res.status(404).json({ message: 'Student not found' });
+        let user = await Student.findOne({ email });
+        let role;
+        if (!user){
+            user = await Admin.findOne({ email });
+            if(!user){
+                user = await Industry.findOne({email});
+                if(!user) return res.status(400).json({ message: 'User does not exist' });
+                else{
+                    role = 'Industry';
+                }
+            }
+            else{
+                role = 'Admin';
+            }
+        }
+        else{
+            role = 'Student';
+        }
 
-        const isMatch = await bcrypt.compare(password, student.password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-        const token = jwt.sign({ id: student._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshtoken = jwt.sign({ id: student._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const refreshtoken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         res.cookie('refreshtoken', refreshtoken, {
             httpOnly: true,
         });
-        res.json({ token, student });
+        res.json({ token, user, role });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

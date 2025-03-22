@@ -3,9 +3,6 @@ const router = express.Router();
 const adminController = require('../controllers/AdminController');
 const {protect} = require('../middleware/AuthMiddleware');
 
-// Public routes
-router.post('/login', adminController.loginAdmin);
-
 // Protected routes - require authentication
 router.get('/', adminController.getAllAdmins);
 router.get('/:id', adminController.getAdminById);

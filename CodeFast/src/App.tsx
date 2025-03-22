@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthGuard } from "./Utils/authGuard"
 import StudentLayout from "./Layouts/StudentLayout"
+import AdminLayout from "./Layouts/AdminLayout"
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path='/student/*' element={<StudentLayout />} />    
+              <Route path='/admin/*' element={<AdminLayout />} />    
               <Route path='/login' element={<Login />} />    
               <Route path='/signup' element={<Signup />} />    
               <Route path='/settings' element={<Settings />} />    

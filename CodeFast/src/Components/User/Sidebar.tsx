@@ -25,7 +25,6 @@ const navItems: NavItem[] = [
   { label: "Courses", href: "/courses", icon: UserIcon, iconSize: "w-7 h-7" },
   { label: "Account", href: "/account", icon: CalendarIcon, iconSize: "w-7 h-7" },
   { label: "Career", href: "/career", icon: UsersIcon, iconSize: "w-7 h-7" },
-  { label: "Study Material", href: "/study-material", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
   { label: "Job/Internship", href: "/job-internship", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
   { label: "Feedback", href: "/feedback", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
 ];
@@ -38,7 +37,6 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [Userrole, _] = useState(authService.getRole());
   useEffect(() => {
     const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
     window.addEventListener("resize", handleResize);

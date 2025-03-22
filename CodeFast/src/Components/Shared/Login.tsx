@@ -35,9 +35,10 @@ const Login = () => {
       if (response.token) {
         const userResponse = await axiosInstance.get("/user/me");
         setUser(userResponse.data.user);
-        
         toast.success("Login successful");
-        navigateByRole(authService.getRole(), navigate, "/");
+        setTimeout(() => {
+          navigate(authService.route( "/"));
+        }, 1000);
       }
     } catch (err: any) {
       setError(

@@ -10,8 +10,8 @@ export function AuthGuard() {
   const isAuthenticated = authService.isAuthenticated();
   const [role, setRole] = useState<string | null>(null);
   const getUserRole = async() => {
-    const r = await authService.getRole();
-    console.log(r)
+    const r = authService.getRole();
+    console.log("role = ", r)
     setRole(r);
   }
 
@@ -25,6 +25,7 @@ export function AuthGuard() {
     "/forgot-password",
     "/terms",
     "/privacy",
+    "/settings",
   ];
 
   React.useEffect(() => {
@@ -43,7 +44,7 @@ export function AuthGuard() {
         if(checkRoutes(role!, location.pathname)){
           return;
         }
-        navigateByRole(role, navigate, "/");
+        navigateByRole(role!, navigate, "/");
       }
     };
 

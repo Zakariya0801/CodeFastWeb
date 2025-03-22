@@ -1,35 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
 import CourseDetail from "./CourseDetail";
 import { Search, BookOpen, Plus } from "lucide-react";
+import axiosInstance from "../../Utils/axiosInstance";
 
-interface Course {
-  id: number;
-  title: string;
+
+export interface Course {
+  _id: number;
+  name: string;
   subtitle: string;
   description: string;
-  instructor: string;
-  lessons: number;
+  instructor: Instructor;
   quizzes: number;
   category: string;
-  lessonsList: string[];
-  quizzesList: string[];
+  quizzesList?: Quiz[];
   studyMaterials: string[];
+}
+
+
+export interface Questions{
+  question:string,
+  options: string[],
+  correctOption: number,
+}
+
+export interface Quiz{
+  _id: string,
+  courseId: Course,
+  title:string,
+  totalMarks: number,
+  Questions: Questions[]
+}
+
+interface Instructor{
+  name: string
 }
 
 function Courses() {
   const [activeFilter, setActiveFilter] = useState("enrolled");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [courses, setCourseData] = useState<Course[]>([]);
+  const [quizData, setQuizData] = useState<Quiz[]>([]);
+  const [isSet, setisSet] = useState(false);
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
   };
 
   const handleCourseClick = (courseId: number) => {
-    const course = courses.find((c) => c.id === courseId);
+    const course = courses.find((c) => c._id === courseId);
     if (!course) return;
     setSelectedCourse(course);
   };
@@ -37,177 +58,161 @@ function Courses() {
   const handleBackClick = () => {
     setSelectedCourse(null);
   };
+  
+  const getCourses = async () =>{
+    const response = await axiosInstance.get("/course/");
+
+    setCourseData(response.data);
+  }
+  const getQuizes = async () =>{
+    const response = await axiosInstance.get("/quizzes/");
+
+    setQuizData(response.data.data);
+  }
+
+  useEffect(() =>{
+    getCourses();
+    getQuizes();
+    console.log("updating")
+  }, [])
+  
+  useEffect(() => {
+    if (courses.length > 0 && quizData.length > 0) {
+      setCourseData(prevCourses => {
+        const updatedCourses = prevCourses.map(course => ({
+          ...course,
+          quizzesList: quizData.filter(q => q.courseId._id === course._id)
+        }));
+  
+        // Check if the new state is actually different to avoid infinite re-renders
+        if (JSON.stringify(updatedCourses) !== JSON.stringify(prevCourses)) {
+          return updatedCourses;
+        }
+        return prevCourses; // Prevents unnecessary re-renders
+      });
+    }
+  }, [courses, quizData]);
+
+
+
 
   // Sample course data
-  const courses: Course[] = [
-    {
-      id: 0,
-      title: "Algorithm",
-      subtitle: "Data Structures & Algorithms",
-      description: "You will learn new algorithms to make your code optimized",
-      instructor: "Sir Messam Raza",
-      lessons: 12,
-      quizzes: 7,
-      category: "Computer Science",
-      lessonsList: [
-        "Introduction to Algorithms",
-        "Time Complexity Analysis",
-        "Space Complexity Analysis",
-        "Searching Algorithms",
-        "Sorting Algorithms",
-        "Greedy Algorithms",
-        "Dynamic Programming",
-        "Graph Algorithms",
-        "String Algorithms",
-        "Advanced Data Structures",
-        "Algorithm Design Techniques",
-        "Case Studies and Applications",
-      ],
-      quizzesList: [
-        "Algorithm Basics",
-        "Complexity Analysis",
-        "Searching and Sorting",
-        "Greedy Algorithms",
-        "Dynamic Programming",
-        "Graph Algorithms",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Algorithm Textbook",
-        "Big-O Cheat Sheet",
-        "Algorithm Visualization Guide",
-        "Problem Solving Techniques",
-        "Coding Interview Prep",
-      ],
-    },
-    {
-      id: 1,
-      title: "Database Systems",
-      subtitle: "Manage Data to reuse it",
-      description: "Store, Retrieve and Use data",
-      instructor: "Sir Arban",
-      lessons: 12,
-      quizzes: 7,
-      category: "Information Technology",
-      lessonsList: [
-        "Introduction to Database Systems",
-        "Relational Database Model",
-        "SQL Fundamentals",
-        "Database Design",
-        "Normalization",
-        "Indexing and Query Optimization",
-        "Transaction Management",
-        "Concurrency Control",
-        "Database Security",
-        "NoSQL Databases",
-        "Data Warehousing",
-        "Big Data and Databases",
-      ],
-      quizzesList: [
-        "Database Basics",
-        "SQL Queries",
-        "Database Design",
-        "Normalization",
-        "Transactions and Concurrency",
-        "NoSQL Concepts",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Database Systems Textbook",
-        "SQL Reference Guide",
-        "ER Diagram Templates",
-        "Normalization Examples",
-        "Database Performance Tuning",
-      ],
-    },
-    {
-      id: 2,
-      title: "Operating Systems",
-      subtitle: "Make a new OS today",
-      description: "Learn to run code on Kernels",
-      instructor: "Sir Sibtain",
-      lessons: 12,
-      quizzes: 7,
-      category: "Computer Science",
-      lessonsList: [
-        "Introduction to Operating Systems",
-        "Process Management",
-        "Thread Management",
-        "CPU Scheduling",
-        "Process Synchronization",
-        "Deadlocks",
-        "Memory Management",
-        "Virtual Memory",
-        "File Systems",
-        "I/O Systems",
-        "Protection and Security",
-        "Distributed Systems",
-      ],
-      quizzesList: [
-        "OS Fundamentals",
-        "Process Management",
-        "Memory Management",
-        "File Systems",
-        "I/O and Security",
-        "Distributed Systems",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Operating Systems Textbook",
-        "Process Management Guide",
-        "Memory Management Diagrams",
-        "File System Architecture",
-        "OS Security Best Practices",
-      ],
-    },
-    {
-      id: 3,
-      title: "Data Structures",
-      subtitle: "Data Types and Structures",
-      description: "Learn new data types and structure in Coding",
-      instructor: "Sir Zakariya Abbas",
-      lessons: 12,
-      quizzes: 7,
-      category: "Computer Science",
-      lessonsList: [
-        "Introduction to Data Structures",
-        "Arrays and Strings",
-        "Linked Lists",
-        "Stacks",
-        "Queues",
-        "Trees",
-        "Binary Search Trees",
-        "Heaps",
-        "Hash Tables",
-        "Graphs",
-        "Advanced Data Structures",
-        "Applications of Data Structures",
-      ],
-      quizzesList: [
-        "Basic Data Structures",
-        "Linear Data Structures",
-        "Trees and Heaps",
-        "Hash Tables",
-        "Graphs",
-        "Advanced Structures",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Data Structures Handbook",
-        "Time Complexity Chart",
-        "Data Structure Visualization",
-        "Implementation Examples",
-        "Problem Solving with Data Structures",
-      ],
-    },
-  ];
+  // const courses: Course[] = [
+  //   {
+  //     _id: 0,
+  //     title: "Algorithm",
+  //     subtitle: "Data Structures & Algorithms",
+  //     description: "You will learn new algorithms to make your code optimized",
+  //     instructor: "Sir Messam Raza",
+  //     quizzes: 7,
+  //     category: "Computer Science",
+  //     quizzesList: [
+  //       "Algorithm Basics",
+  //       "Complexity Analysis",
+  //       "Searching and Sorting",
+  //       "Greedy Algorithms",
+  //       "Dynamic Programming",
+  //       "Graph Algorithms",
+  //       "Final Assessment",
+  //     ],
+  //     studyMaterials: [
+  //       "Algorithm Textbook",
+  //       "Big-O Cheat Sheet",
+  //       "Algorithm Visualization Guide",
+  //       "Problem Solving Techniques",
+  //       "Coding Interview Prep",
+  //     ],
+  //   },
+  //   {
+  //     _id: 1,
+  //     title: "Database Systems",
+  //     subtitle: "Manage Data to reuse it",
+  //     description: "Store, Retrieve and Use data",
+  //     instructor: "Sir Arban",
+  //     quizzes: 7,
+  //     category: "Information Technology",
+      
+  //     quizzesList: [
+  //       "Database Basics",
+  //       "SQL Queries",
+  //       "Database Design",
+  //       "Normalization",
+  //       "Transactions and Concurrency",
+  //       "NoSQL Concepts",
+  //       "Final Assessment",
+  //     ],
+  //     studyMaterials: [
+  //       "Database Systems Textbook",
+  //       "SQL Reference Guide",
+  //       "ER Diagram Templates",
+  //       "Normalization Examples",
+  //       "Database Performance Tuning",
+  //     ],
+  //   },
+  //   {
+  //     _id: 2,
+  //     title: "Operating Systems",
+  //     subtitle: "Make a new OS today",
+  //     description: "Learn to run code on Kernels",
+  //     instructor: "Sir Sibtain",
+  //     quizzes: 7,
+  //     category: "Computer Science",
+      
+  //     quizzesList: [
+  //       "OS Fundamentals",
+  //       "Process Management",
+  //       "Memory Management",
+  //       "File Systems",
+  //       "I/O and Security",
+  //       "Distributed Systems",
+  //       "Final Assessment",
+  //     ],
+  //     studyMaterials: [
+  //       "Operating Systems Textbook",
+  //       "Process Management Guide",
+  //       "Memory Management Diagrams",
+  //       "File System Architecture",
+  //       "OS Security Best Practices",
+  //     ],
+  //   },
+  //   {
+  //     _id: 3,
+  //     title: "Data Structures",
+  //     subtitle: "Data Types and Structures",
+  //     description: "Learn new data types and structure in Coding",
+  //     instructor: "Sir Zakariya Abbas",
+  //     quizzes: 7,
+  //     category: "Computer Science",
+      
+  //     quizzesList: [
+  //       "Basic Data Structures",
+  //       "Linear Data Structures",
+  //       "Trees and Heaps",
+  //       "Hash Tables",
+  //       "Graphs",
+  //       "Advanced Structures",
+  //       "Final Assessment",
+  //     ],
+  //     studyMaterials: [
+  //       "Data Structures Handbook",
+  //       "Time Complexity Chart",
+  //       "Data Structure Visualization",
+  //       "Implementation Examples",
+  //       "Problem Solving with Data Structures",
+  //     ],
+  //   },
+  // ];
 
   // Filter courses based on search query
   const filteredCourses = courses.filter(
-    (course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.instructor.toLowerCase().includes(searchQuery.toLowerCase())
+    (course) =>{
+      console.log("courseadasd = ", course)
+      return (course &&
+        course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.instructor.name.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    } 
   );
 
   // If a course is selected, show the course detail view
@@ -266,7 +271,7 @@ function Courses() {
       {filteredCourses.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredCourses.map((course) => (
-            <CourseCard key={course.id} course={course} isSelected={false} onClick={() => handleCourseClick(course.id)} />
+            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClick(course._id)} />
           ))}
         </div>
       ) : (

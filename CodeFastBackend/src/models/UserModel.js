@@ -55,7 +55,8 @@ const StudentSchema = new mongoose.Schema({
         }
     }],
     university:{
-        type:String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'University'
     },
     createdAt: {
         type: Date,

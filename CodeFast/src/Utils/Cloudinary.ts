@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { v2 as cloudinary } from 'cloudinary';
 
     // Configuration
     

@@ -1,6 +1,6 @@
 const Student = require('../models/UserModel'); // Ensure correct path
 const bcrypt = require('bcryptjs');
-
+const { addPerformanceLog,getPerformanceLogs } = require('./SperformanceController');
 
 const getAllStudents = async (req, res) => {
     try {
@@ -24,12 +24,21 @@ const getStudentbyId = async (req, res) => {
 
 const updateStudent = async (req, res) => {
     try {
-        const updatedStudent = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { id } = req.params;
+        const { sPerformance } = req.body; // Extract updated performance
+        const updatedStudent = await Student.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedStudent) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        if (sPerformance !== undefined) {
+            await addPerformanceLog(id, sPerformance);
+        }
         res.status(200).json(updatedStudent);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 const deleteStudent = async (req, res) => {
     try {
@@ -89,6 +98,16 @@ const CurrentRole = async (req, res) => {
     }
 }
 
+const fetchStudentLogs = async (req, res) => {
+    try{
+        const id = req.user._id;
+        const logs = await getPerformanceLogs(id);
+        res.status(200).json({ logs });
+    } catch (error) {
+        console.log("error = ", error)
+        res.status(500).json({ error: error.message})
+    }
+}
 module.exports = {
     getAllStudents,
     getStudentbyId,
@@ -97,5 +116,6 @@ module.exports = {
     subscribePlan,
     applyJob,
     CurrentUser,
-    CurrentRole
+    CurrentRole,
+    fetchStudentLogs
 };

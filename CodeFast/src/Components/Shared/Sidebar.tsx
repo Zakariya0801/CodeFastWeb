@@ -11,6 +11,7 @@ import { IconType } from "react-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Paths } from "../../Utils/types";
+import authService from "../Auth/authService";
 
 interface NavItem {
   label: string;
@@ -37,12 +38,22 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
   const [isMinimized, setIsMinimized] = useState(false);
-
+  const [Userrole, setUserrole] = useState("");
   useEffect(() => {
     const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const getRole = async () => {
+    const role = await authService.getRole();
+    setUserrole(role);
+    return role;
+  }
+  useEffect(() => {
+    getRole();
+  }, []);
+
 
   return (
     <div className="min-h-screen flex">
@@ -94,7 +105,7 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
                 const isActive = activeItem === item.label;
                 return (
                   <motion.div key={item.label} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                    <Link to={item.href}>
+                    <Link to={(Userrole === "Student")? "/student" + item.href: ""}>
                       <span
                         onClick={() => {
                           setActiveItem(item.label);

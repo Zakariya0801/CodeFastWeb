@@ -28,6 +28,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       console.error("Unauthorized. Please check your token.");
+      localStorage.removeItem("token");
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }

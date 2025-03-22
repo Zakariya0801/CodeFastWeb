@@ -12,6 +12,10 @@ const {protect} = require("./middleware/AuthMiddleware");
 const authRouter = require("./routes/AuthRoutes");
 const userRouter = require("./routes/UserRoutes");
 const courseRouter = require("./routes/CourseRoutes");
+const universityRouter = require("./routes/UniversityRoutes");
+const quizRoutes = require('./routes/QuizRoutes')
+const studyMaterialRoutes = require('./routes/StudyMaterialRoutes')
+const adminRoutes = require('./routes/AdminRoutes')
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
@@ -25,9 +29,12 @@ app.get("/", async (req, res) => {
   res.send("Hello, World!");
 });
 app.use("/api/user", protect, userRouter);
+app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRouter);
-app.use("/api/course", protect, courseRouter);
-
+app.use("/api/university", universityRouter);
+app.use("/api/course", courseRouter);
+app.use('/api/quizzes', quizRoutes);
+app.use('/api/study-materials', studyMaterialRoutes);
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom" // Import useNavigate
 import { Eye, EyeOff, UserPlus } from "react-feather"
 import axiosInstance from "../../Utils/axiosInstance"
@@ -36,6 +36,15 @@ const Signup = () => {
     university: "",
     agreeTerms: false,
   })
+  const [universities, setUniversities] = useState<any[]>([])
+  const getUniversties = async () => {
+    const response = await axiosInstance.get("/university")
+    setUniversities(response.data)
+  }
+
+  useEffect(() =>{
+    getUniversties()
+  }, [])
   const [errors, setErrors] = useState({
     fullName: "",
     email: "",
@@ -308,13 +317,11 @@ const Signup = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value=""></option>
-
-                    <option value="National University of Computing and Emerging Sciences">
-                      National University of Computing and Emerging Sciences
-                    </option>
-                    <option value="NUST">NUST</option>
-                    <option value="COMSATS">COMSATS</option>
-                    <option value="Bahria University">Bahria University</option>
+                    {universities.map((uni) => (
+                      <option key={uni._id} value={uni.name}>
+                        {uni.name}
+                      </option>
+                    ))}
                   </select>
                   {errors.university && <p className="text-red-500 text-sm mt-1">{errors.university}</p>}
                 </div>

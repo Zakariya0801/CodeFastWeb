@@ -3,9 +3,10 @@
 import type React from "react"
 import { useState } from "react"
 import { ArrowLeft, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { Quiz } from "./Courses"
 
 interface QuizDetailProps {
-  quiz: string
+  quiz: Quiz
   courseTitle: string
   onBackClick: () => void
 }
@@ -16,43 +17,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([])
 
   // Generate sample questions
-  const questions = [
-    {
-      question: `What is the primary focus of ${quiz}?`,
-      options: [
-        "Understanding theoretical concepts",
-        "Applying practical techniques",
-        "Analyzing complex problems",
-        "All of the above",
-      ],
-      correctAnswer: 3,
-    },
-    {
-      question: `Which of the following is NOT a key component of ${quiz}?`,
-      options: ["Algorithmic thinking", "Data manipulation", "Social networking", "Problem decomposition"],
-      correctAnswer: 2,
-    },
-    {
-      question: `In the context of ${quiz}, what does optimization typically refer to?`,
-      options: ["Making code run faster", "Using less memory", "Improving readability", "Both A and B"],
-      correctAnswer: 3,
-    },
-    {
-      question: `Which approach is best for solving problems related to ${quiz}?`,
-      options: ["Top-down approach", "Bottom-up approach", "Depends on the specific problem", "Random testing"],
-      correctAnswer: 2,
-    },
-    {
-      question: `What is the relationship between ${courseTitle} and ${quiz}?`,
-      options: [
-        "They are completely unrelated",
-        "They are complementary concepts",
-        `${quiz} is a subset of ${courseTitle}`,
-        `${courseTitle} is a subset of ${quiz}`,
-      ],
-      correctAnswer: 2,
-    },
-  ]
+  
 
   const handleStartQuiz = () => {
     setQuizStarted(true)
@@ -65,7 +30,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
   }
 
   const handleNextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < quiz.Questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
     }
   }
@@ -80,14 +45,17 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
     // Calculate score
     let correctCount = 0
     selectedAnswers.forEach((answer, index) => {
-      if (answer === questions[index].correctAnswer) {
+      if ( typeof answer === "number" && typeof quiz.Questions[index].correctOption === "number" && answer === quiz.Questions[index].correctOption) {
+        correctCount++
+      }
+      else if ( typeof answer === "number" && typeof quiz.Questions[index].correctOption === "string" && answer.toString() === quiz.Questions[index].correctOption) {
         correctCount++
       }
     })
 
-    const score = Math.round((correctCount / questions.length) * 100)
+    const score = Math.round((correctCount / quiz.Questions.length) * 100)
 
-    alert(`Quiz completed!\nYour score: ${score}%\nCorrect answers: ${correctCount}/${questions.length}`)
+    alert(`Quiz completed!\nYour score: ${score}%\nCorrect answers: ${correctCount}/${quiz.Questions.length}`)
     setQuizStarted(false)
   }
 
@@ -102,15 +70,15 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
         <div className="flex items-center gap-2 mb-2">
           <span className="text-sm font-medium">{courseTitle}</span>
         </div>
-        <h1 className="text-3xl font-bold mb-4">{quiz}</h1>
+        <h1 className="text-3xl font-bold mb-4">{quiz.title}</h1>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
-            <span>{questions.length} questions</span>
+            <span>{quiz.Questions.length} questions</span>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
-            <span>15 minutes</span>
+            <span>{quiz.Questions.length * 3} minutes</span>
           </div>
         </div>
       </div>
@@ -121,7 +89,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
 
           <div className="space-y-4 mb-8">
             <p className="text-gray-700">
-              This quiz will test your knowledge of {quiz}. Please read each question carefully and select the best
+              This quiz will test your knowledge of {quiz.title}. Please read each question carefully and select the best
               answer.
             </p>
 
@@ -131,8 +99,8 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
                 <div>
                   <p className="font-medium text-blue-800">Important Information</p>
                   <ul className="list-disc pl-5 mt-2 text-blue-700 text-sm">
-                    <li>You will have 15 minutes to complete this quiz</li>
-                    <li>There are {questions.length} multiple-choice questions</li>
+                    <li>You will have {quiz.Questions.length * 3} minutes to complete this quiz</li>
+                    <li>There are {quiz.Questions.length} multiple-choice questions</li>
                     <li>You can navigate between questions</li>
                     <li>Your score will be displayed at the end</li>
                     <li>A passing score is 70% or higher</li>
@@ -153,7 +121,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
         <div className="bg-white rounded-xl border p-8 max-w-3xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold">
-              Question {currentQuestion + 1} of {questions.length}
+              Question {currentQuestion + 1} of {quiz.Questions.length}
             </h2>
             <div className="text-sm text-gray-500 flex items-center">
               <Clock className="w-4 h-4 mr-1" />
@@ -162,10 +130,10 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
           </div>
 
           <div className="mb-8">
-            <h3 className="text-lg font-medium mb-4">{questions[currentQuestion].question}</h3>
+            <h3 className="text-lg font-medium mb-4">{quiz.Questions[currentQuestion].question}</h3>
 
             <div className="space-y-3">
-              {questions[currentQuestion].options.map((option, index) => (
+              {quiz.Questions[currentQuestion].options.map((option, index) => (
                 <div
                   key={index}
                   className={`border rounded-lg p-4 cursor-pointer transition-colors ${
@@ -205,7 +173,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
               Previous
             </button>
 
-            {currentQuestion < questions.length - 1 ? (
+            {currentQuestion < quiz.Questions.length - 1 ? (
               <button
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 onClick={handleNextQuestion}
@@ -224,7 +192,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
 
           <div className="mt-8 pt-6 border-t">
             <div className="flex justify-between">
-              {Array.from({ length: questions.length }).map((_, index) => (
+              {Array.from({ length: quiz.Questions.length }).map((_, index) => (
                 <button
                   key={index}
                   className={`w-8 h-8 rounded-full flex items-center justify-center ${

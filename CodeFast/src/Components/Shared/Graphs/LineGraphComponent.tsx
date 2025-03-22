@@ -34,7 +34,7 @@ const LineGraphComponent = ({ data, dataKey }
           <XAxis dataKey={dataKey} />
           <YAxis 
             label={{ 
-              value: "SPerformace", 
+              value: "performance", 
               angle: -90, 
               position: 'insideLeft', 
               style: { textAnchor: 'middle' }
@@ -42,7 +42,7 @@ const LineGraphComponent = ({ data, dataKey }
           />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey={"SPerformance"} stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey={"performance"} stroke="#8884d8" activeDot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
     </div>

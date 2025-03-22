@@ -6,15 +6,23 @@ const courseSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    subtitle: {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
         required: true,
         maxlength: 250
     },
-    Quizes: [{
+    instructor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Quiz'
-    }]
+        ref: 'Admin',
+    },
+    category: {
+        type: String,
+        required: true
+    },
 }, { timestamps: true });
 
 const Course = mongoose.model('Course', courseSchema);

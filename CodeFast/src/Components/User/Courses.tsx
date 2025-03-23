@@ -34,6 +34,7 @@ export interface Quiz{
   totalMarks: number,
   Questions: Questions[]
   isAttempted: boolean
+  obtained?: number
 }
 
 interface Instructor{
@@ -110,7 +111,10 @@ function Courses() {
         ...quiz,
         isAttempted: res.data.evaluations.some((attempt:any) => {
           return attempt.quizId === quiz._id
-        })
+        }),
+        obtained: res.data.evaluations.find((attempt:any) => {
+          return attempt.quizId === quiz._id
+        })?.score
       }
     }));
   }

@@ -7,6 +7,8 @@ import { Pencil, CheckCircle } from "lucide-react"
 import authService from "../Auth/authService"
 import { useNavigate } from "react-router-dom"
 import { uploadImage } from "../../Utils/Cloudinary"
+import axiosInstance from "../../Utils/axiosInstance"
+import { toast } from "react-toastify"
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<string>("edit-profile")
@@ -116,12 +118,6 @@ const Settings = () => {
   const validateProfileForm = (): boolean => {
     const newErrors: { [key: string]: string } = {}
 
-    // Check if all fields are filled
-    if (!formData.name.trim()) newErrors.name = "Name is required"
-    if (!formData.email.trim()) newErrors.email = "Email is required"
-    if (!formData.dob.trim()) newErrors.dob = "Date of Birth is required"
-    if (!formData.cgpa.trim()) newErrors.cgpa = "CGPA is required"
-
     // Update errors state
     setErrors((prev) => ({
       ...prev,
@@ -155,7 +151,7 @@ const Settings = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     let isValid = false
@@ -164,6 +160,26 @@ const Settings = () => {
       isValid = validateProfileForm()
       if (isValid) {
         console.log("Profile form submitted:", formData)
+        const user = await authService.getUser()
+        const role = authService.getRole();
+        // Update the user profile
+        if(role === "Admin"){
+          await axiosInstance.put(`/admin/${user._id}`, {
+            name: formData.name ? formData.name : user.name,
+            email: formData.email? formData.email : user.email,
+            dob: formData.dob ? formData.dob : user.dob,
+            cgpa: formData.cgpa ? formData.cgpa : user.cgpa,
+          })
+        }
+        else{
+          await axiosInstance.put(`/user/${user._id}`, {
+            name: formData.name ? formData.name : user.name,
+            email: formData.email? formData.email : user.email,
+            dob: formData.dob ? formData.dob : user.dob,
+            cgpa: formData.cgpa ? formData.cgpa : user.cgpa,
+          })
+        }
+        toast.success("Profile updated successfully")
       }
     } else if (activeTab === "security") {
       isValid = validateSecurityForm()
@@ -185,17 +201,32 @@ const Settings = () => {
     fileInputRef.current?.click()
   }
   
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       // Store the file name or path in formData
-      uploadImage(file).then((url:string) => {
+      uploadImage(file).then(async (url:string) => {
         
         const reader = new FileReader()
         reader.onloadend = () => {
           setProfileImage(reader.result as string)
         }
+        
         reader.readAsDataURL(file)
+        const user = await authService.getUser()
+        const role = authService.getRole();
+        // Update the profile picture URL
+        if(role === "Admin"){
+           await axiosInstance.put(`/admin/${user._id}`, {
+            picture: url,
+          })
+        }
+        else if(role === "Student"){
+          await axiosInstance.put(`/user/${user._id}`, {
+            picture: url,
+          })
+        }
+        toast.success("Profile picture updated successfully")
         // Clear any errors
         setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
     }).catch((error) => {

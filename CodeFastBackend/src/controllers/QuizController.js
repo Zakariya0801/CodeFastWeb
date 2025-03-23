@@ -5,7 +5,7 @@ const createQuiz = async (req, res) => {
     try {
         const { courseId, title, totalMarks, Questions } = req.body;
 
-        if (!courseId || !title || !totalMarks || !Questions || Questions.length < 5) {
+        if (!courseId || !title || !totalMarks || !Questions) {
             return res.status(400).json({
                 success: false,
                 message: 'Please provide all required fields'
@@ -27,6 +27,7 @@ const createQuiz = async (req, res) => {
             message: 'Quiz created successfully'
         });
     } catch (error) {
+        console.log("error = ", error.message)
         res.status(500).json({
             success: false,
             message: 'Failed to create quiz',

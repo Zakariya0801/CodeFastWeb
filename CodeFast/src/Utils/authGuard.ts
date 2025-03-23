@@ -11,7 +11,6 @@ export function AuthGuard() {
   const [role, setRole] = useState<string | null>(null);
   const getUserRole = async() => {
     const r = authService.getRole();
-    console.log("role = ", r)
     setRole(r);
   }
 

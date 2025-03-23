@@ -25,14 +25,13 @@ const AddCourse = async (req,res) => {
         const {name,
             subtitle,
             description,
-            instructor,
             category,
         } = req.body;
         const course = new Course({
             name,
             description,
             subtitle,
-            instructor,
+            instructor: req.user._id,
             category
         });
         await course.save();

@@ -48,12 +48,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, isSelected, onClick }) 
         <div className="flex items-center justify-between border-t pt-4">
           <div className="flex items-center">
             <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
-              {course.instructor.name
+              {course.instructor?.name
                 .split(" ")
                 .map((name) => name[0])
                 .join("")}
             </div>
-            <span className="text-xs text-gray-600">{course.instructor.name}</span>
+            <span className="text-xs text-gray-600">{course.instructor?.name}</span>
           </div>
           <div className="flex items-center gap-1">
             

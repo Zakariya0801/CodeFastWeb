@@ -9,7 +9,7 @@ router.get('/role', CurrentRole);
 router.get('/analytics', fetchStudentLogs); 
 router.get('/:id', getStudentbyId);
 router.put('/:id', updateStudent);
-router.delete('/:id', deleteStudent);
+router.delete('/:id', protect, authorize("Admin"), deleteStudent);
 router.put('/subscribe/:id', subscribePlan);
 router.put('/apply/:id/:jobId', applyJob);
 

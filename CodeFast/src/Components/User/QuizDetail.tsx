@@ -68,7 +68,7 @@ const QuizDetail: React.FC<QuizDetailProps> = ({ quiz, courseTitle, onBackClick 
     alert(`Quiz completed!\nYour score: ${score}%\nCorrect answers: ${correctCount}/${quiz.Questions.length}`);
     await axiosInstance.post("/course/evaluation/", {
       quizId: quiz._id, 
-      score
+      score:correctCount
     });
     setQuizStarted(false)
   }

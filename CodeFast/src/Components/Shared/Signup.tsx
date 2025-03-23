@@ -37,6 +37,7 @@ const Signup = () => {
     agreeTerms: false,
   })
   const [universities, setUniversities] = useState<any[]>([])
+  const [SelectedUniversity,setselectedUniversity] = useState<any>(null);
   const getUniversties = async () => {
     const response = await axiosInstance.get("/university")
     setUniversities(response.data)
@@ -136,10 +137,12 @@ const Signup = () => {
   }
   const [selectedValue, setSelectedValue] = useState("")
   const inputref = useRef<HTMLSelectElement>(null)
-  const handleChangeinDrop = (e: any) => {
-    console.log(e.target.value)
-    setSelectedValue(e.target.value)
-    setFormData({ ...formData, university: e.target.value }) // Update formData with selected university
+  const handleChangeinDrop = (id:string) => {
+    console.log("calllled")
+    console.log(universities.find((uni) => uni._id === id))
+    setselectedUniversity(universities.find((uni) => uni._id === id))
+    setSelectedValue(universities.find((uni) => uni._id === id).name)
+    setFormData({ ...formData, university: id }) // Update formData with selected university
   }
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -312,11 +315,16 @@ const Signup = () => {
                   <select
                     value={selectedValue}
                     ref={inputref}
-                    onChange={handleChangeinDrop}
                     aria-placeholder="Select University"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => {
+                      const selectedUni = universities.find((uni) => uni.name === e.target.value);
+                      if (selectedUni) {
+                        handleChangeinDrop(selectedUni._id);
+                      }
+                    }}
                   >
-                    <option value=""></option>
+                    <option value="">Select University</option>
                     {universities.map((uni) => (
                       <option key={uni._id} value={uni.name}>
                         {uni.name}

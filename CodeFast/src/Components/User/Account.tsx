@@ -10,13 +10,14 @@ import { navigateByRole } from "../../Utils/authGuard"
 import authService from "../Auth/authService"
 
 const Account = () => {
-
+  
+  const [courses, setCourseData] = useState<Course[]>([]);
   // Statistics Data
   const statsData = [
     {
       id: 1,
       title: "Registered Courses",
-      value: "5",
+      value: courses?.length,
       icon: <FaBook className="text-yellow-500" size={24} />,
     },
     {
@@ -38,7 +39,6 @@ const Account = () => {
       icon: <FaChartLine className="text-green-500" size={24} />,
     },
   ]
-  const [courses, setCourseData] = useState<Course[]>([]);
   const getCourses = async () =>{
     const response = await axiosInstance.get("/course/");
     const resp = await axiosInstance.get("/course/registrations/");
@@ -51,35 +51,41 @@ const Account = () => {
   },[])
 
   const navigate = useNavigate();
-
+  const [user, setUser] = useState<any>();
+  // const {user} = useGlobalContext();
+  const getUSer = async () => {
+    setUser(await authService.getUser());
+  }
+  
+  useEffect(() => {
+    getUSer();
+  },[]);
   // Subscription Data
   const subscriptionData = {
     balance: "$5,756",
-    cardHolder: "Eddy Cusuma",
+    cardHolder: user?.name,
     validThru: "12/22",
     cardNumber: "3778 **** **** 1234",
   }
   const [pic, setPic] = useState("");
-    const {user} = useGlobalContext();
-    const getPic = async () => {
+  const getPic = async () => {
+      console.log("fetching pic = ", user?.picture)
         const pi = await fetch(`${user?.picture}`);
         console.log("pic = ", pi)
         setPic(pi.url);
         return pi;
     }
-    console.log(user)
     
     useEffect(() => {
         // setuser(getCurr());
         getPic();
-    }, []);
+    }, [user]);
 
     const [linechartData, setLineData] = useState([]);
 
   useEffect(() => {
     const getAnalytics = async () => {
       const { data } = await axiosInstance.get("/user/analytics");
-      console.log("logs = ", data.logs)
       setLineData(data.logs);
     };
     getAnalytics();
@@ -101,19 +107,19 @@ const Account = () => {
           <div className="flex-1 bg-blue-600 text-white p-6">
             <div className="mb-6">
               <p className="text-xs text-blue-200 mb-1">Name</p>
-              <h2 className="text-2xl font-bold">{user.name}</h2>
+              <h2 className="text-2xl font-bold">{user?.name}</h2>
             </div>
             <div className="flex justify-between mb-6">
               <div>
                 <p className="text-xs text-blue-200 mb-1">Degree</p>
-                <p>{user.degree}</p>
+                <p>{user?.degree}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-blue-200 mb-1">CGPA</p>
-                <p>{user.cgpa}</p>
+                <p>{user?.cgpa}</p>
               </div>
             </div>
-            <h3 className="text-xl font-semibold">{user.university.name}</h3>
+            <h3 className="text-xl font-semibold">{user?.university.name}</h3>
           </div>
         </div>
 
@@ -148,7 +154,7 @@ const Account = () => {
                     <div className="p-2 rounded-full bg-gray-100 mr-3"><FaCode className="text-blue-500" size={24} /></div>
                     <div>
                       <p className="font-medium">{course.name}</p>
-                      <p className="text-xs text-gray-500">{course.instructor.name}</p>
+                      <p className="text-xs text-gray-500">{course.instructor?.name}</p>
                     </div>
                   </div>
                   <button className="px-3 py-1 bg-red-500 text-white text-xs rounded-full">Remove</button>

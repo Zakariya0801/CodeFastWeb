@@ -36,7 +36,7 @@ app.use("/api/university", universityRouter);
 app.use("/api/course", courseRouter);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/study-materials', studyMaterialRoutes);
-app.post("/evaluation", createStudentEvaluation);
+app.post("/api/evaluation", createStudentEvaluation);
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////
@@ -44,7 +44,6 @@ app.post("/evaluation", createStudentEvaluation);
 
 
 app.use((req, res) => {
-  console.log("herer")
   res.status(404).json({ error: "Route not found" });
 });
 

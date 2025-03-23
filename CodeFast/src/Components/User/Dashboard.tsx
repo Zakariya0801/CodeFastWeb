@@ -40,12 +40,20 @@ function Dashboard() {
         <div className="flex-1 bg-gray-50 p-4 rounded-lg">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">My Information</h2>
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-6 text-white">
-            <p className="text-xs text-blue-200">Name</p>
-            <p className="text-lg font-bold">{user?.name}</p>
-            <p className="text-xs text-blue-200 mt-4">Degree</p>
-            <p className="text-sm font-medium">{user?.degree}</p>
-            <p className="text-xs text-blue-200 mt-4">CGPA</p>
-            <p className="text-sm font-medium">{user?.cgpa}</p>
+            <p className=" text-blue-200">Name</p>
+            <p className="text-xl font-bold">{user?.name}</p>
+            <p className=" text-blue-200 mt-4">Degree</p>
+            <p className="text-xl font-medium">{user?.degree}</p>
+            <div className="flex flex-1 justify-between">
+              <div>
+                <p className=" text-blue-200 mt-4">CGPA</p>
+                <p className="text-lg font-medium">{user?.cgpa}</p>
+              </div>
+              <div>
+                <p className=" text-blue-200 mt-4">Student Performance</p>
+                <p className="text-xl font-medium">{user?.sPerformance}</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -72,7 +80,7 @@ function Dashboard() {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Line Chart */}
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Weekly Activity</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Daily Activity</h2>
           <LineGraphComponent data={linechartData} dataKey="date" />
         </div>
 

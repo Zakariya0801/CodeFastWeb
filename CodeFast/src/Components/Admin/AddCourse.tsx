@@ -3,6 +3,9 @@
 import type React from "react"
 import { useState } from "react"
 import { PlusCircle, X, ArrowLeft, Save, CheckCircle } from "lucide-react"
+import axiosInstance from "../../Utils/axiosInstance"
+import authService from "../Auth/authService"
+import { toast } from "react-toastify"
 
 // Define types for our data structures
 type Option = {
@@ -12,9 +15,9 @@ type Option = {
 
 type Question = {
   id: string
-  statement: string
+  question: string
   options: Option[]
-  correctOptionId: string
+  correctOption: string
 }
 
 type Quiz = {
@@ -116,14 +119,14 @@ export default function AddCourse({setActiveFilter}: Iadd) {
 
     const newQuestion: Question = {
       id: Date.now().toString(),
-      statement: "",
+      question: "",
       options: [
         { id: "1", text: "" },
         { id: "2", text: "" },
         { id: "3", text: "" },
         { id: "4", text: "" },
       ],
-      correctOptionId: "1",
+      correctOption: "1",
     }
 
     const updatedQuiz = {
@@ -144,7 +147,7 @@ export default function AddCourse({setActiveFilter}: Iadd) {
   const updateQuestionStatement = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (!currentQuestion || !currentQuiz) return
 
-    const updatedQuestion = { ...currentQuestion, statement: e.target.value }
+    const updatedQuestion = { ...currentQuestion, question: e.target.value }
     setCurrentQuestion(updatedQuestion)
 
     const updatedQuiz = {
@@ -188,7 +191,7 @@ export default function AddCourse({setActiveFilter}: Iadd) {
   const setCorrectOption = (optionId: string) => {
     if (!currentQuestion || !currentQuiz) return
 
-    const updatedQuestion = { ...currentQuestion, correctOptionId: optionId }
+    const updatedQuestion = { ...currentQuestion, correctOption: optionId }
     setCurrentQuestion(updatedQuestion)
 
     const updatedQuiz = {
@@ -268,14 +271,44 @@ export default function AddCourse({setActiveFilter}: Iadd) {
       setStep("quizzes")
     }
   }
-
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Submitting course data:", courseData)
-    // Here you would typically send the data to your backend
-    alert("Course created successfully!")
+  const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault()
+      console.log("Submitting course data:", courseData)
+      // Here you would typically send the data to your backend
+      try{
+        const cours = await axiosInstance.post("/course", {
+            name: courseData.name,
+            subtitle: courseData.subtitle,
+            description: courseData.description,
+            category: courseData.category,
+        })
+        console.log("Course created", cours.data.course)
+        for(const quiz of courseData.quizzes){
+            await axiosInstance.post("/quizzes", {
+                courseId: cours.data.course._id, 
+                title: quiz.title, 
+                totalMarks: 10, 
+                Questions: quiz.questions.map((q) => {
+                    // store options as string[] having only text
+
+                    const NewOptions = q.options.map((opt) => {
+                        return opt.text
+                    }); 
+                    return {
+                        question: q.question,
+                        options: NewOptions,
+                        correctOption: q.correctOption
+                    }
+                })
+            })
+        }
+        toast.success("Course created successfully!")
+    }catch(err){
+        console.log("Error creating course", err)
+    }
     // Reset form or redirect
+    setActiveFilter("enrolled")
   }
 
   // Check if we can proceed to the next step
@@ -285,9 +318,9 @@ export default function AddCourse({setActiveFilter}: Iadd) {
 
   // Check if a quiz has 5 complete questions
   const isQuizComplete = (quiz: Quiz) => {
-    if (quiz.questions.length !== 5) return false
+    // if (quiz.questions.length !== 5) return false
 
-    return quiz.questions.every((q) => q.statement && q.options.every((opt) => opt.text) && q.correctOptionId)
+    return quiz.questions.every((q) => q.question && q.options.every((opt) => opt.text) && q.correctOption)
   }
 
   return (
@@ -451,7 +484,7 @@ export default function AddCourse({setActiveFilter}: Iadd) {
                           <div className="mr-3">
                             <div className="text-lg font-medium">{quiz.title}</div>
                             <div className="text-sm text-gray-500">
-                              {quiz.questions.length}/5 questions
+                              {quiz.questions.length} questions
                               {isQuizComplete(quiz) && (
                                 <span className="ml-2 text-green-500 flex items-center">
                                   <CheckCircle className="w-4 h-4 mr-1" /> Complete
@@ -551,7 +584,7 @@ export default function AddCourse({setActiveFilter}: Iadd) {
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">Question Statement</label>
                               <textarea
-                                value={currentQuestion.statement}
+                                value={currentQuestion.question}
                                 onChange={updateQuestionStatement}
                                 rows={2}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -570,7 +603,7 @@ export default function AddCourse({setActiveFilter}: Iadd) {
                                       type="radio"
                                       id={`option-${option.id}`}
                                       name={`correct-option-${currentQuestion.id}`}
-                                      checked={currentQuestion.correctOptionId === option.id}
+                                      checked={currentQuestion.correctOption === option.id}
                                       onChange={() => setCorrectOption(option.id)}
                                       className="mr-2 h-4 w-4 text-purple-600 focus:ring-purple-500"
                                     />
@@ -588,7 +621,7 @@ export default function AddCourse({setActiveFilter}: Iadd) {
                           </div>
                         ) : (
                           <div className="cursor-pointer" onClick={() => selectQuestion(question)}>
-                            <p className="mb-2 truncate">{question.statement || "No statement yet..."}</p>
+                            <p className="mb-2 truncate">{question.question || "No statement yet..."}</p>
                             <div className="text-sm text-gray-500">
                               {question.options.filter((o) => o.text).length}/4 options filled
                             </div>

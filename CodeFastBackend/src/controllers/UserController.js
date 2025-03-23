@@ -4,7 +4,7 @@ const { addPerformanceLog,getPerformanceLogs } = require('./SperformanceControll
 
 const getAllStudents = async (req, res) => {
     try {
-        const student = await Student.find();
+        const student = await Student.find().select("-password").populate('university');
         if (!student) return res.status(404).json({ message: 'Student not found' });
         res.status(200).json(student);
     } catch (error) {
@@ -26,6 +26,7 @@ const updateStudent = async (req, res) => {
     try {
         const { id } = req.params;
         const { sPerformance } = req.body; // Extract updated performance
+        console.log("body = ", req.body)
         const updatedStudent = await Student.findByIdAndUpdate(id, req.body, { new: true });
 
         if (!updatedStudent) {
@@ -78,7 +79,6 @@ const applyJob = async (req, res) => {
 
 const CurrentUser = async (req, res) => {
     try {
-        console.log("hrerer")
         const user = req.user;
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.status(200).json({user});

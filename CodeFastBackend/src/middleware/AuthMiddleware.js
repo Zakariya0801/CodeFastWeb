@@ -13,7 +13,6 @@ const protect = async (req, res, next) => {
           .json({ message: "No token, authorization denied" });
         return;
       }
-      // console.log(process.env.JWT_SECRET)
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       // Find user from token
@@ -37,7 +36,6 @@ const protect = async (req, res, next) => {
   
       // Add user to request object
       req.user = user;
-      console.log("returning next = ", user)
       next();
     } catch (error) {
       console.log("error = ", error)

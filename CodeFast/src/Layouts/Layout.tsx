@@ -3,6 +3,7 @@ import Sidebar from "../Components/User/Sidebar"
 import { useLocation } from "react-router-dom";
 import { Paths } from "../Utils/types";
 import authService from "../Components/Auth/authService";
+import AdminSidebar from "../Components/Admin/SideBar";
 
 export default function Layout ({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -12,7 +13,8 @@ export default function Layout ({ children }: { children: React.ReactNode }) {
       <div className='flex w-full'>
         {
           (location.pathname!=="/login" && location.pathname!=="/signup")&&
-          (role ==="Student" ||role ==="Admin"   ? <Sidebar route={(Paths[location.pathname as keyof typeof Paths] ? location.pathname : "/") as keyof typeof Paths} />: null)
+          (role ==="Student"  ? <Sidebar route={(Paths[location.pathname as keyof typeof Paths] ? location.pathname : "/") as keyof typeof Paths} />: 
+          role === "Admin" ? <AdminSidebar route={(Paths[location.pathname as keyof typeof Paths] ? location.pathname : "/") as keyof typeof Paths} />: null)
         }
 
         <div className='w-full'>

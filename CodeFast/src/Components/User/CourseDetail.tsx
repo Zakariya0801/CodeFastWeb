@@ -71,12 +71,12 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
           <p className="text-xl mb-4">{course.subtitle}</p>
           <div className="flex items-center mb-2">
             <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-medium text-white mr-2">
-              {course.instructor.name
+              {course.instructor?.name
                 .split(" ")
                 .map((name) => name[0])
                 .join("")}
             </div>
-            <span className="text-white/90">{course.instructor.name}</span>
+            <span className="text-white/90">{course.instructor?.name}</span>
           </div>
           <div className="flex items-center gap-3">
             
@@ -197,7 +197,10 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
                     {quiz.Questions.length} questions • {quiz.Questions.length * 3} minutes
                   </p>
                 </div>
-                <button className={`px-4 py-2 bg-blue-600 text-white rounded-md ${quiz.isAttempted? "bg-red-600 disabled" : "bg-blue-600"} hover:bg-blue-700`}>Start Quiz</button>
+                <div>
+                {quiz.isAttempted && <span className="text-sm font-medium text-gray-500 mr-5">Attempted {quiz.obtained }/10</span>}
+                  <button className={`px-4 py-2 bg-blue-600 text-white rounded-md ${quiz.isAttempted? "bg-red-600 disabled" : "bg-blue-600"} hover:bg-blue-700`}>Start Quiz</button>
+                </div>
               </div>
             ))}
           </div>

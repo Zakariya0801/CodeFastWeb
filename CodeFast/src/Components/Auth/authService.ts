@@ -68,6 +68,7 @@ const authService = {
   },
   getUser: async () => {
     const res = await axiosInstance.get("/user/me");
+    console.log("please work = ", res.data.user)
     return res.data.user;
   },
 

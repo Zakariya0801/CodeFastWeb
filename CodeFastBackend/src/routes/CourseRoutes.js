@@ -5,7 +5,7 @@ const {authorize} = require("../middleware/AuthMiddleware");
 const { createQuiz, getAllQuizzes, getQuizById } = require('../controllers/QuizController');
 const {createStudentEvaluation} = require("../controllers/EvaluationController");
 //Course routes
-router.post("/evaluation", createStudentEvaluation);
+
 router.get('/', getAllCourse);
 router.post('/', authorize("Admin"), AddCourse);
 router.get('/:id', getCoursebyId);

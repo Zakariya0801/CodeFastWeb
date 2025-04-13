@@ -24,8 +24,6 @@ const addPerformanceLog = async (Student_id, performance) => {
 
 const getPerformanceLogs = async (Student_id) => {
     try {
-        
-
         const student = await Student.findById(Student_id);
         if (!student) {
             console.error('Student not found');

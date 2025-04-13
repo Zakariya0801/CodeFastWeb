@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthGuard } from "./Utils/authGuard"
 import StudentLayout from "./Layouts/StudentLayout"
 import AdminLayout from "./Layouts/AdminLayout"
+import IndustryLayout from "./Layouts/IndustryLayout"
 
 function App() {
 
@@ -21,10 +22,11 @@ function App() {
           <Layout>
             <Routes>
               <Route path='/student/*' element={<StudentLayout />} />    
-              <Route path='/admin/*' element={<AdminLayout />} />    
+              <Route path='/admin/*' element={<AdminLayout />} />
+              <Route path='/industry/*' element={<IndustryLayout />} />    
               <Route path='/login' element={<Login />} />    
               <Route path='/signup' element={<Signup />} />    
-              <Route path='/settings' element={<Settings />} />    
+              <Route path='/settings' element={<Settings />} />
             </Routes>
           </Layout>
         </Router>

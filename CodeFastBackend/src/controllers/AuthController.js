@@ -1,5 +1,6 @@
 const Student = require('../models/UserModel'); // Ensure correct path
 const Admin = require('../models/AdminModel');
+const Industry = require('../models/IndustryModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {addPerformanceLog} = require('./SperformanceController')
@@ -62,6 +63,7 @@ const login = async (req, res) => {
         });
         res.json({ token, user, role });
     } catch (error) {
+        console.log(error.message);
         res.status(500).json({ error: error.message });
     }
 }

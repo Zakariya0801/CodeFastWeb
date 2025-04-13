@@ -5,17 +5,24 @@ import QuizDetail from "./QuizDetail"
 import StudyMaterialDetail from "./StudyMaterialDetail"
 
 import {Course, Quiz} from "./Courses"
+import Certificate from "../Shared/CompletionCertificate"
+import { useGlobalContext } from "../Auth/GlobalProvider"
 
 interface CourseDetailProps {
   course: Course
   onBackClick: () => void
   onUnenroll: () => void
+  // give default value to completed prop
+  completed?: boolean
 }
 
-const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnenroll }) => {
+const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnenroll, completed }) => {
+  console.log("completed = ", completed)
   const [activeTab, setActiveTab] = useState<"overview" | "lessons" | "quizzes" | "materials">("overview")
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz|null>(null)
-  const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null)
+  const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
+  const { user } = useGlobalContext();
+  const [getCerificate, setGetCertificate] = useState(false);
   console.log("courseeeeee = ", course)
   // Generate a consistent color based on the course title
   const getColorClass = (title: string) => {
@@ -41,6 +48,9 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
     setSelectedMaterial(null)
   }
 
+  if(getCerificate) {
+    return <Certificate userName={user?.name} course={course}/>
+  }
   
 
   // If a specific quiz is selected
@@ -55,6 +65,7 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
     )
   }
 
+
   return (
     <div className="container mx-auto px-6 py-12 max-w-7xl relative">
       <button onClick={onBackClick} className="flex items-center text-blue-600 mb-6 hover:underline">
@@ -67,7 +78,11 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
           <div className="bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full w-fit mb-4">
             {course.category}
           </div>
+          <div className="flex flex-row justify-between">
           <h1 className="text-3xl font-bold mb-2">{course.name}</h1>
+          {completed && (
+            <Certificate userName={user?.name} course={course}/>)}
+          </div>
           <p className="text-xl mb-4">{course.subtitle}</p>
           <div className="flex items-center mb-2">
             <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-medium text-white mr-2">

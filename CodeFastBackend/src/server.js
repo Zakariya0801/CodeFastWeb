@@ -17,6 +17,7 @@ const universityRouter = require("./routes/UniversityRoutes");
 const quizRoutes = require('./routes/QuizRoutes')
 const studyMaterialRoutes = require('./routes/StudyMaterialRoutes')
 const adminRoutes = require('./routes/AdminRoutes')
+const industryRoutes = require('./routes/IndustryRoutes')
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
@@ -37,6 +38,7 @@ app.use("/api/course", courseRouter);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/study-materials', studyMaterialRoutes);
 app.post("/api/evaluation", createStudentEvaluation);
+app.use("/api/industry", industryRoutes);
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////

@@ -44,9 +44,11 @@ interface Instructor{
 function Courses() {
   const [activeFilter, setActiveFilter] = useState("enrolled");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedCompletedCourse, setCompletedCourse] = useState<Course | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [courses, setCourseData] = useState<Course[]>([]);
   const [Unenrolled, setUnenrolledCourse] = useState<Course[]>([]);
+  const [Completed, setCompleted] = useState<Course[]>([]);
   const [quizData, setQuizData] = useState<Quiz[]>([]);
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
@@ -56,6 +58,11 @@ function Courses() {
     const course = courses.find((c) => c._id === courseId);
     if (!course) return;
     setSelectedCourse(course);
+  };
+  const handleCourseClickCompleted = (courseId: number) => {
+    const course = courses.find((c) => c._id === courseId);
+    if (!course) return;
+    setCompletedCourse(course);
   };
   const enrollCourse = ( courseId: number) => {
     axiosInstance.post("/course/registrations/", {
@@ -131,7 +138,12 @@ function Courses() {
           ...course,
           quizzesList: quizData.filter(q => q.courseId._id === course._id)
         }));
-  
+
+        // set completed courses to those which have all quizes attempted
+        setCompleted(updatedCourses.filter((course) => {
+          return course.quizzesList?.every((quiz) => quiz.isAttempted);
+        }));
+        
         // Check if the new state is actually different to avoid infinite re-renders
         if (JSON.stringify(updatedCourses) !== JSON.stringify(prevCourses)) {
           return updatedCourses;
@@ -149,12 +161,15 @@ function Courses() {
       return (course &&
         (course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.instructor.name.toLowerCase().includes(searchQuery.toLowerCase())))
+        course.instructor.name.toLowerCase().includes(searchQuery.toLowerCase())) && !course.quizzesList?.every((quiz) => quiz.isAttempted))
     } 
   );
 
+  if(selectedCompletedCourse){
+    return <CourseDetail course={selectedCompletedCourse} onBackClick={handleBackClick} onUnenroll={() => null} completed={true} />;
+  }
   // If a course is selected, show the course detail view
-  if (selectedCourse) {
+  else if (selectedCourse) {
     return <CourseDetail course={selectedCourse} onBackClick={handleBackClick} onUnenroll={() => unenrollCourse(selectedCourse._id)} />;
   }
 
@@ -192,6 +207,17 @@ function Courses() {
             <Plus className="w-4 h-4" />
             Enroll New Course
           </button>
+          <button
+            className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
+              activeFilter === "completed"
+                ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
+                : "bg-white border border-gray-300 hover:bg-gray-50"
+            }`}
+            onClick={() => handleFilterClick("completed")}
+          >
+            <BookOpen className="w-4 h-4" />
+            Completed Courses
+          </button>
         </div>
 
         <div className="relative">
@@ -215,10 +241,16 @@ function Courses() {
             <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClick(course._id)} />
           ))}
         </div>
-      ) : (
+      ) : activeFilter === "enroll" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {Unenrolled.map((course) => (
             <CourseCard key={course._id} course={course} isSelected={false} onClick={() => enrollCourse(course._id)} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Completed.map((course) => (
+            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClickCompleted(course._id)} />
           ))}
         </div>
       )}

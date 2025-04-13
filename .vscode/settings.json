@@ -1,5 +1,16 @@
 {
     "inference.model": "stable-code:3b-code-q4_0",
     "inference.temperature": 0.2,
-    "inference.custom.format": "stable-code"
+    "inference.custom.format": "stable-code",
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false,
+        "python": true,
+        "javascript": true,
+        "typescriptreact": true,
+        "javascriptreact": true,
+        "typescript": true
+    }
 }

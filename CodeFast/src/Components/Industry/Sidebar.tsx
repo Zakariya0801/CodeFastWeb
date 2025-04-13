@@ -23,16 +23,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: MdHome, iconSize: "w-7 h-7" },
-  { label: "Courses", href: "/courses", icon: UserIcon, iconSize: "w-7 h-7" },
-  { label: "Requests", href: "/requests", icon: UsersIcon, iconSize: "w-7 h-7" },
-  { label: "Industry Management", href: "/industry", icon: FactoryIcon, iconSize: "w-7 h-7" },
-  { label: "User Management", href: "/user-management", icon: UsersIcon, iconSize: "w-7 h-7" },
-  { label: "Feedback", href: "/feedback", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
+  { label: "Internships", href: "/", icon: FactoryIcon, iconSize: "w-7 h-7" },
+  { label: "Employee Management", href: "/", icon: UsersIcon, iconSize: "w-7 h-7" },
+  
 ];
 
 type RouteKeys = keyof typeof Paths;
 
-const AdminSidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
+const IndustrySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   const path = Paths[route];
   const [activeItem, setActiveItem] = useState(path);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -124,4 +122,4 @@ const AdminSidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   );
 };
 
-export default AdminSidebar;
+export default IndustrySidebar;

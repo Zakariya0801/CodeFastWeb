@@ -11,6 +11,7 @@ import { IconType } from "react-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Paths } from "../../Utils/types";
+import authService from "../Auth/authService";
 
 interface NavItem {
   label: string;
@@ -24,7 +25,6 @@ const navItems: NavItem[] = [
   { label: "Courses", href: "/courses", icon: UserIcon, iconSize: "w-7 h-7" },
   { label: "Account", href: "/account", icon: CalendarIcon, iconSize: "w-7 h-7" },
   { label: "Career", href: "/career", icon: UsersIcon, iconSize: "w-7 h-7" },
-  { label: "Study Material", href: "/study-material", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
   { label: "Job/Internship", href: "/job-internship", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
   { label: "Feedback", href: "/feedback", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
 ];
@@ -37,12 +37,13 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
   const [isMinimized, setIsMinimized] = useState(false);
-
   useEffect(() => {
     const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
 
   return (
     <div className="min-h-screen flex">
@@ -52,7 +53,7 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
           className="fixed top-4 left-4 z-50 p-2 rounded-full  hover:bg-gray-300"
           onClick={() => setIsMinimized(!isMinimized)}
         >
-          {isMinimized ? <CiMenuBurger size={20} /> : <CiMenuFries size={20} />}
+          {isMinimized ? <CiMenuBurger size={20} color="white"  /> : <CiMenuFries size={20} color="white" />}
         </button>
       )}
 
@@ -79,29 +80,29 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
             `}
           >
             {/* Sidebar Header */}
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-4 bg-gray-700">
               {!isMinimized && (
                 <div className="flex items-center ml-15 gap-2">
-                  <img src="/codefast.png" alt="CodeFast Logo" className="h-10 w-10" />
-                  <span className="font-bold text-2xl">CodeFast</span>
+                  <img src="../../../logo.jpg" alt="CodeFast Logo" className="h-10 w-10" />
+                  <span className="font-bold text-2xl text-white">CodeFast</span>
                 </div>
               )}
             </div>
-
+            <div className="bg-gray-700 p-5"></div>
             {/* Navigation Links */}
-            <nav className="flex flex-col gap-5 px-3 mt-6">
+            <nav className="flex flex-col h-full gap-5 px-3 bg-gray-700">
               {navItems.map((item) => {
                 const isActive = activeItem === item.label;
                 return (
                   <motion.div key={item.label} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                    <Link to={item.href}>
+                    <Link to={authService.route(item.href)}>
                       <span
                         onClick={() => {
                           setActiveItem(item.label);
                           setIsSidebarOpen(false);
                         }}
                         className={`flex items-center gap-6 px-3 py-2 rounded-md transition-colors 
-                        ${isActive ? "text-blue-600 font-semibold" : "text-gray-500"} 
+                        ${isActive ? "font-semibold text-white bg-blue-700" : "text-white"} 
                         ${isLargeScreen && isMinimized ? "justify-center" : ""}`}
                       >
                         <item.icon className={`${item.iconSize} shrink-0`} />

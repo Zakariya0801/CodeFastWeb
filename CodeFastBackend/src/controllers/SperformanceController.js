@@ -32,8 +32,36 @@ const getPerformanceLogs = async (Student_id) => {
 
         // Ensure the query uses the correct field name
         const logs = await PerformanceLog.find({ Student_id: Student_id }).sort({ createdAt: -1 });
+        const latestLogs = new Map();
 
-        return logs.length > 0 ? logs : []; // Ensures an array is returned
+        logs.forEach(log => {
+        const date = new Date(log.createdAt).toLocaleString("en-US", { 
+            year: "numeric", 
+            month: "2-digit", 
+            day: "2-digit", 
+            hour: "2-digit", 
+            minute: "2-digit", 
+            second: "2-digit", 
+            hour12: false 
+        }).replace(",", ""); // Extract YYYY-MM-DD
+        // if (!latestLogs.has(date) || new Date(log.createdAt) > new Date(latestLogs.get(date).createdAt)) {
+            latestLogs.set(date, log); // Store the latest log for that date
+        // }
+        });
+
+        const formattedLogs = Array.from(latestLogs.values()).map(log => ({
+        date: new Date(log.createdAt).toLocaleString("en-US", { 
+            year: "numeric", 
+            month: "2-digit", 
+            day: "2-digit", 
+            hour: "2-digit", 
+            minute: "2-digit", 
+            second: "2-digit", 
+            hour12: false 
+        }).replace(",", ""), // Extracts day of the month
+        performance: log.performance
+        }));
+        return formattedLogs.length > 0 ? formattedLogs : []; // Ensures an array is returned
     } catch (error) {
         console.error('Error fetching performance logs:', error.message);
         return [{message:'No Performance Log Found3'}];

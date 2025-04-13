@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import React, { useState } from "react";
 
 const GlobalContext = createContext<any>(null);
@@ -12,7 +12,20 @@ export const useGlobalContext = () => {
 };
 
 const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(() => {
+    // Load user from localStorage when the app starts
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  useEffect(() => {
+    // Save user to localStorage whenever it changes
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user"); // Clean up if user logs out
+    }
+  }, [user]);
 
   return (
     <GlobalContext.Provider

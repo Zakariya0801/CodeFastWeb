@@ -1,222 +1,182 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
 import CourseDetail from "./CourseDetail";
 import { Search, BookOpen, Plus } from "lucide-react";
+import axiosInstance from "../../Utils/axiosInstance";
+import TopBar from "../Shared/Topbar";
 
-interface Course {
-  id: number;
-  title: string;
+
+export interface Course {
+  _id: number;
+  name: string;
   subtitle: string;
   description: string;
-  instructor: string;
-  lessons: number;
+  instructor: Instructor;
   quizzes: number;
   category: string;
-  lessonsList: string[];
-  quizzesList: string[];
+  quizzesList?: Quiz[];
   studyMaterials: string[];
+}
+
+
+export interface Questions{
+  question:string,
+  options: string[],
+  correctOption: number,
+}
+
+export interface Quiz{
+  _id: string,
+  courseId: Course,
+  title:string,
+  totalMarks: number,
+  Questions: Questions[]
+  isAttempted: boolean
+  obtained?: number
+}
+
+interface Instructor{
+  name: string
 }
 
 function Courses() {
   const [activeFilter, setActiveFilter] = useState("enrolled");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedCompletedCourse, setCompletedCourse] = useState<Course | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [courses, setCourseData] = useState<Course[]>([]);
+  const [Unenrolled, setUnenrolledCourse] = useState<Course[]>([]);
+  const [Completed, setCompleted] = useState<Course[]>([]);
+  const [quizData, setQuizData] = useState<Quiz[]>([]);
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
   };
 
   const handleCourseClick = (courseId: number) => {
-    const course = courses.find((c) => c.id === courseId);
+    const course = courses.find((c) => c._id === courseId);
     if (!course) return;
     setSelectedCourse(course);
   };
+  const handleCourseClickCompleted = (courseId: number) => {
+    const course = courses.find((c) => c._id === courseId);
+    if (!course) return;
+    setCompletedCourse(course);
+  };
+  const enrollCourse = ( courseId: number) => {
+    axiosInstance.post("/course/registrations/", {
+      courseId: courseId
+    }).then((response) => {
+      console.log(response)
+      getCourses();
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
+  const unenrollCourse = ( courseId: number) => {
+    axiosInstance.delete("/course/registrations/", {
+      data: {
+        courseId: courseId
+      }
+    }).then((response) => {
+      console.log(response)
+      getCourses();
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
 
   const handleBackClick = () => {
     setSelectedCourse(null);
   };
+  
+  const getCourses = async () =>{
+    const response = await axiosInstance.get("/course/");
+    const resp = await axiosInstance.get("/course/registrations/");
+    console.log("response = ", response.data)
+    console.log("current = ", resp.data)
+    const registrations = resp.data.data;
+    console.log(response.data.filter((course: Course) => registrations.some((reg: any) => reg.courseId === course._id)))
+    setCourseData(response.data.filter((course: Course) => registrations.some((reg: any) => reg.courseId === course._id)));
+    setUnenrolledCourse(response.data.filter((course: Course) =>{
+      console.log("checking = ", course._id , "  and  ")
+      return !registrations.some((reg: any) =>{
+        console.log(String(reg.courseId) === String(course._id)) 
+        return String(reg.courseId) === String(course._id)
 
-  // Sample course data
-  const courses: Course[] = [
-    {
-      id: 0,
-      title: "Algorithm",
-      subtitle: "Data Structures & Algorithms",
-      description: "You will learn new algorithms to make your code optimized",
-      instructor: "Sir Messam Raza",
-      lessons: 12,
-      quizzes: 7,
-      category: "Computer Science",
-      lessonsList: [
-        "Introduction to Algorithms",
-        "Time Complexity Analysis",
-        "Space Complexity Analysis",
-        "Searching Algorithms",
-        "Sorting Algorithms",
-        "Greedy Algorithms",
-        "Dynamic Programming",
-        "Graph Algorithms",
-        "String Algorithms",
-        "Advanced Data Structures",
-        "Algorithm Design Techniques",
-        "Case Studies and Applications",
-      ],
-      quizzesList: [
-        "Algorithm Basics",
-        "Complexity Analysis",
-        "Searching and Sorting",
-        "Greedy Algorithms",
-        "Dynamic Programming",
-        "Graph Algorithms",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Algorithm Textbook",
-        "Big-O Cheat Sheet",
-        "Algorithm Visualization Guide",
-        "Problem Solving Techniques",
-        "Coding Interview Prep",
-      ],
-    },
-    {
-      id: 1,
-      title: "Database Systems",
-      subtitle: "Manage Data to reuse it",
-      description: "Store, Retrieve and Use data",
-      instructor: "Sir Arban",
-      lessons: 12,
-      quizzes: 7,
-      category: "Information Technology",
-      lessonsList: [
-        "Introduction to Database Systems",
-        "Relational Database Model",
-        "SQL Fundamentals",
-        "Database Design",
-        "Normalization",
-        "Indexing and Query Optimization",
-        "Transaction Management",
-        "Concurrency Control",
-        "Database Security",
-        "NoSQL Databases",
-        "Data Warehousing",
-        "Big Data and Databases",
-      ],
-      quizzesList: [
-        "Database Basics",
-        "SQL Queries",
-        "Database Design",
-        "Normalization",
-        "Transactions and Concurrency",
-        "NoSQL Concepts",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Database Systems Textbook",
-        "SQL Reference Guide",
-        "ER Diagram Templates",
-        "Normalization Examples",
-        "Database Performance Tuning",
-      ],
-    },
-    {
-      id: 2,
-      title: "Operating Systems",
-      subtitle: "Make a new OS today",
-      description: "Learn to run code on Kernels",
-      instructor: "Sir Sibtain",
-      lessons: 12,
-      quizzes: 7,
-      category: "Computer Science",
-      lessonsList: [
-        "Introduction to Operating Systems",
-        "Process Management",
-        "Thread Management",
-        "CPU Scheduling",
-        "Process Synchronization",
-        "Deadlocks",
-        "Memory Management",
-        "Virtual Memory",
-        "File Systems",
-        "I/O Systems",
-        "Protection and Security",
-        "Distributed Systems",
-      ],
-      quizzesList: [
-        "OS Fundamentals",
-        "Process Management",
-        "Memory Management",
-        "File Systems",
-        "I/O and Security",
-        "Distributed Systems",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Operating Systems Textbook",
-        "Process Management Guide",
-        "Memory Management Diagrams",
-        "File System Architecture",
-        "OS Security Best Practices",
-      ],
-    },
-    {
-      id: 3,
-      title: "Data Structures",
-      subtitle: "Data Types and Structures",
-      description: "Learn new data types and structure in Coding",
-      instructor: "Sir Zakariya Abbas",
-      lessons: 12,
-      quizzes: 7,
-      category: "Computer Science",
-      lessonsList: [
-        "Introduction to Data Structures",
-        "Arrays and Strings",
-        "Linked Lists",
-        "Stacks",
-        "Queues",
-        "Trees",
-        "Binary Search Trees",
-        "Heaps",
-        "Hash Tables",
-        "Graphs",
-        "Advanced Data Structures",
-        "Applications of Data Structures",
-      ],
-      quizzesList: [
-        "Basic Data Structures",
-        "Linear Data Structures",
-        "Trees and Heaps",
-        "Hash Tables",
-        "Graphs",
-        "Advanced Structures",
-        "Final Assessment",
-      ],
-      studyMaterials: [
-        "Data Structures Handbook",
-        "Time Complexity Chart",
-        "Data Structure Visualization",
-        "Implementation Examples",
-        "Problem Solving with Data Structures",
-      ],
-    },
-  ];
+      })
+    }
+    ));
+  }
+  const getQuizes = async () =>{
+    const response = await axiosInstance.get("/quizzes/");
+    const res = await axiosInstance.get("/course/evaluation/");
+    setQuizData(response.data.data.map((quiz:any) =>{
+      return {
+        ...quiz,
+        isAttempted: res.data.evaluations.some((attempt:any) => {
+          return attempt.quizId === quiz._id
+        }),
+        obtained: res.data.evaluations.find((attempt:any) => {
+          return attempt.quizId === quiz._id
+        })?.score
+      }
+    }));
+  }
+
+  useEffect(() =>{
+    getCourses();
+    getQuizes();
+  }, [])
+  
+  useEffect(() => {
+    if (courses.length > 0 && quizData.length > 0) {
+      setCourseData(prevCourses => {
+        const updatedCourses = prevCourses.map(course => ({
+          ...course,
+          quizzesList: quizData.filter(q => q.courseId._id === course._id)
+        }));
+
+        // set completed courses to those which have all quizes attempted
+        setCompleted(updatedCourses.filter((course) => {
+          return course.quizzesList?.every((quiz) => quiz.isAttempted);
+        }));
+        
+        // Check if the new state is actually different to avoid infinite re-renders
+        if (JSON.stringify(updatedCourses) !== JSON.stringify(prevCourses)) {
+          return updatedCourses;
+        }
+        return prevCourses; // Prevents unnecessary re-renders
+      });
+    }
+  }, [courses, quizData]);
+  console.log("quizzzessss = ",courses)
+
 
   // Filter courses based on search query
   const filteredCourses = courses.filter(
-    (course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.instructor.toLowerCase().includes(searchQuery.toLowerCase())
+    (course) =>{
+      return (course &&
+        (course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.instructor.name.toLowerCase().includes(searchQuery.toLowerCase())) && !course.quizzesList?.every((quiz) => quiz.isAttempted))
+    } 
   );
 
+  if(selectedCompletedCourse){
+    return <CourseDetail course={selectedCompletedCourse} onBackClick={handleBackClick} onUnenroll={() => null} completed={true} />;
+  }
   // If a course is selected, show the course detail view
-  if (selectedCourse) {
-    return <CourseDetail course={selectedCourse} onBackClick={handleBackClick} />;
+  else if (selectedCourse) {
+    return <CourseDetail course={selectedCourse} onBackClick={handleBackClick} onUnenroll={() => unenrollCourse(selectedCourse._id)} />;
   }
 
   // Otherwise show the course catalog
   return (
+    <>
+      <TopBar title="Courses" />
     <div className="container mx-auto px-6 py-12 max-w-7xl">
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Course Catalog</h1>
@@ -238,14 +198,25 @@ function Courses() {
           </button>
           <button
             className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
-              activeFilter === "add"
+              activeFilter === "enroll"
                 ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
                 : "bg-white border border-gray-300 hover:bg-gray-50"
             }`}
-            onClick={() => handleFilterClick("add")}
+            onClick={() => handleFilterClick("enroll")}
           >
             <Plus className="w-4 h-4" />
-            Add New Course
+            Enroll New Course
+          </button>
+          <button
+            className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
+              activeFilter === "completed"
+                ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
+                : "bg-white border border-gray-300 hover:bg-gray-50"
+            }`}
+            onClick={() => handleFilterClick("completed")}
+          >
+            <BookOpen className="w-4 h-4" />
+            Completed Courses
           </button>
         </div>
 
@@ -263,18 +234,29 @@ function Courses() {
         </div>
       </div>
 
-      {filteredCourses.length > 0 ? (
+      
+      {activeFilter === "enrolled" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredCourses.map((course) => (
-            <CourseCard key={course.id} course={course} isSelected={false} onClick={() => handleCourseClick(course.id)} />
+            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClick(course._id)} />
+          ))}
+        </div>
+      ) : activeFilter === "enroll" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Unenrolled.map((course) => (
+            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => enrollCourse(course._id)} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No courses found matching your search criteria.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Completed.map((course) => (
+            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClickCompleted(course._id)} />
+          ))}
         </div>
       )}
+      
     </div>
+    </>
   );
 }
 

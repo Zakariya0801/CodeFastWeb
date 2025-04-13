@@ -13,11 +13,10 @@ const protect = async (req, res, next) => {
           .json({ message: "No token, authorization denied" });
         return;
       }
-      // console.log(process.env.JWT_SECRET)
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       // Find user from token
-      let user = await Student.findById(decoded.id).select("-password");
+      let user = await Student.findById(decoded.id).select("-password").populate("university");
       if (!user) {
         user = await Admin.findById(decoded.id).select("-password");
         if (!user) {
@@ -37,7 +36,6 @@ const protect = async (req, res, next) => {
   
       // Add user to request object
       req.user = user;
-      console.log("user = ", user)
       next();
     } catch (error) {
       console.log("error = ", error)

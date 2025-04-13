@@ -13,6 +13,11 @@ const {protect} = require("./middleware/AuthMiddleware");
 const authRouter = require("./routes/AuthRoutes");
 const userRouter = require("./routes/UserRoutes");
 const courseRouter = require("./routes/CourseRoutes");
+const universityRouter = require("./routes/UniversityRoutes");
+const quizRoutes = require('./routes/QuizRoutes')
+const studyMaterialRoutes = require('./routes/StudyMaterialRoutes')
+const adminRoutes = require('./routes/AdminRoutes')
+const industryRoutes = require('./routes/IndustryRoutes')
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
@@ -26,9 +31,14 @@ app.get("/", async (req, res) => {
   res.send("Hello, World!");
 });
 app.use("/api/user", protect, userRouter);
+app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRouter);
+app.use("/api/university", universityRouter);
 app.use("/api/course", courseRouter);
-app.post("/evaluation", createStudentEvaluation);
+app.use('/api/quizzes', quizRoutes);
+app.use('/api/study-materials', studyMaterialRoutes);
+app.post("/api/evaluation", createStudentEvaluation);
+app.use("/api/industry", industryRoutes);
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////
@@ -36,7 +46,6 @@ app.post("/evaluation", createStudentEvaluation);
 
 
 app.use((req, res) => {
-  console.log("herer")
   res.status(404).json({ error: "Route not found" });
 });
 

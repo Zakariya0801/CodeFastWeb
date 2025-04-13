@@ -13,13 +13,12 @@ import {
 } from "recharts";
 
 interface ChartProps {
-  data: { name: string; value: number }[];
+  data: { name: string,  quizzes:number }[];
   colors: string[];
-  yLabel: string;
   yrange: number[];
 }
 
-const BarChartComponent: React.FC<ChartProps> = ({ data, colors, yLabel, yrange }) => {
+const BarChartComponent: React.FC<ChartProps> = ({ data, colors, yrange }) => {
   const [chartHeight, setChartHeight] = useState(400);
   const [chartWidth, setChartWidth] = useState("95%");
   const [margin, setMargin] = useState({ top: 30, right: 20, left: 10, bottom: 20 });
@@ -46,19 +45,20 @@ const BarChartComponent: React.FC<ChartProps> = ({ data, colors, yLabel, yrange 
     <ResponsiveContainer width={chartWidth} height={chartHeight}>
       <BarChart data={data} margin={margin}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis dataKey="name" >
+          <Label value="Days" offset={0} position="insideBottom" />
+        </XAxis>
         <YAxis domain={yrange}>
           <Label
-            value={yLabel}
+            value={"Quizzes"}
             angle={-90}
             position="insideLeft"
             style={{ textAnchor: "middle" }}
           />
         </YAxis>
         <Tooltip />
-        <Legend />
-        <Bar dataKey="value">
-          {data.map((entry, index) => (
+        <Bar dataKey="quizzes">
+          {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Bar>

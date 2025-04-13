@@ -2,14 +2,29 @@
 
 import type React from "react"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom" // Import useNavigate
 import { Eye, EyeOff, UserPlus } from "react-feather"
+import axiosInstance from "../../Utils/axiosInstance"
+import { uploadImage } from "../../Utils/Cloudinary"
+
+interface FormData{
+  fullName: string,
+  email: string,
+  password: string,
+  confirmPassword: string,
+  dob: string,
+  profilePicture: string,
+  degree: string,
+  cgpa: string,
+  university: string,
+  agreeTerms: boolean
+}
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
     password: "",
@@ -21,6 +36,16 @@ const Signup = () => {
     university: "",
     agreeTerms: false,
   })
+  const [universities, setUniversities] = useState<any[]>([])
+  const [SelectedUniversity,setselectedUniversity] = useState<any>(null);
+  const getUniversties = async () => {
+    const response = await axiosInstance.get("/university")
+    setUniversities(response.data)
+  }
+
+  useEffect(() =>{
+    getUniversties()
+  }, [])
   const [errors, setErrors] = useState({
     fullName: "",
     email: "",
@@ -81,13 +106,28 @@ const Signup = () => {
     return !Object.values(newErrors).some((error) => error !== "") // Return true if no errors
   }
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault()
 
     // Validate the form
     if (!validateForm()) {
       return // Stop submission if validation fails
     }
+
+    const data = {
+      name: formData.fullName,
+      email: formData.email,
+      dob: formData.dob,
+      university: formData.university,
+      password: formData.password,
+      cgpa: formData.cgpa,
+      degree: formData.degree,
+      profile_photo: formData.profilePicture,
+    }
+
+    const response = await axiosInstance.post("/auth/register", data);
+
+    console.log("Student registered:", response.data);
 
     // Handle signup logic here (e.g., API call)
     console.log("Signup submitted:", formData)
@@ -97,30 +137,38 @@ const Signup = () => {
   }
   const [selectedValue, setSelectedValue] = useState("")
   const inputref = useRef<HTMLSelectElement>(null)
-  const handleChangeinDrop = (e: any) => {
-    console.log(e.target.value)
-    setSelectedValue(e.target.value)
-    setFormData({ ...formData, university: e.target.value }) // Update formData with selected university
+  const handleChangeinDrop = (id:string) => {
+    console.log("calllled")
+    console.log(universities.find((uni) => uni._id === id))
+    setselectedUniversity(universities.find((uni) => uni._id === id))
+    setSelectedValue(universities.find((uni) => uni._id === id).name)
+    setFormData({ ...formData, university: id }) // Update formData with selected university
   }
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       // Store the file name or path in formData
-      setFormData({
-        ...formData,
-        profilePicture: file.name,
-      })
+      uploadImage(file).then((url:string) => {
 
-      // Create a preview URL
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfilePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setFormData({
+          ...formData,
+          profilePicture: url,
+        })
 
-      // Clear any errors
-      setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
+        // Create a preview URL
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setProfilePreview(reader.result as string)
+        }
+        reader.readAsDataURL(file)
+
+        // Clear any errors
+        setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
+    }).catch((error) => {
+      console.log("Error uploading image:", error.message)
+      setErrors((prevErrors) => ({ ...prevErrors, profilePicture: error.message }))
+    })
     }
   }
   return (
@@ -136,7 +184,7 @@ const Signup = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-8">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} method="POST">
                 {/* Full Name */}
                 <div className="mb-5">
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -267,18 +315,21 @@ const Signup = () => {
                   <select
                     value={selectedValue}
                     ref={inputref}
-                    onChange={handleChangeinDrop}
                     aria-placeholder="Select University"
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => {
+                      const selectedUni = universities.find((uni) => uni.name === e.target.value);
+                      if (selectedUni) {
+                        handleChangeinDrop(selectedUni._id);
+                      }
+                    }}
                   >
-                    <option value=""></option>
-
-                    <option value="National University of Computing and Emerging Sciences">
-                      National University of Computing and Emerging Sciences
-                    </option>
-                    <option value="NUST">NUST</option>
-                    <option value="COMSATS">COMSATS</option>
-                    <option value="Bahria University">Bahria University</option>
+                    <option value="">Select University</option>
+                    {universities.map((uni) => (
+                      <option key={uni._id} value={uni.name}>
+                        {uni.name}
+                      </option>
+                    ))}
                   </select>
                   {errors.university && <p className="text-red-500 text-sm mt-1">{errors.university}</p>}
                 </div>

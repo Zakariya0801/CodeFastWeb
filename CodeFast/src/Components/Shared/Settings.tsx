@@ -6,6 +6,9 @@ import { useState, useRef, useEffect } from "react"
 import { Pencil, CheckCircle } from "lucide-react"
 import authService from "../Auth/authService"
 import { useNavigate } from "react-router-dom"
+import { uploadImage } from "../../Utils/Cloudinary"
+import axiosInstance from "../../Utils/axiosInstance"
+import { toast } from "react-toastify"
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<string>("edit-profile")
@@ -14,6 +17,7 @@ const Settings = () => {
   )
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showNotification, setShowNotification] = useState<boolean>(false)
+  const [user, setUser] = useState<any>({})
   const [errors, setErrors] = useState<{
     profile: { [key: string]: string }
     security: { [key: string]: string }
@@ -21,6 +25,14 @@ const Settings = () => {
     profile: {},
     security: {},
   })
+  const getUSer = async () => {
+    const response = await authService.getUser()
+    console.log(response)
+    setUser(response)
+  }
+  useEffect(() => {
+      getUSer()
+    },[]);
 
   // Profile form data
   const [formData, setFormData] = useState<{
@@ -29,10 +41,10 @@ const Settings = () => {
     dob: string
     cgpa: string
   }>({
-    name: "Charlene Reed",
-    email: "charlenereed@gmail.com",
-    dob: "1990-01-25", // Updated to match the format for date input
-    cgpa: "3.5", // Fixed to be a proper CGPA value
+    name: "",
+    email: "",
+    dob: "", // Updated to match the format for date input
+    cgpa: "", // Fixed to be a proper CGPA value
   })
 
   // Security settings state
@@ -106,12 +118,6 @@ const Settings = () => {
   const validateProfileForm = (): boolean => {
     const newErrors: { [key: string]: string } = {}
 
-    // Check if all fields are filled
-    if (!formData.name.trim()) newErrors.name = "Name is required"
-    if (!formData.email.trim()) newErrors.email = "Email is required"
-    if (!formData.dob.trim()) newErrors.dob = "Date of Birth is required"
-    if (!formData.cgpa.trim()) newErrors.cgpa = "CGPA is required"
-
     // Update errors state
     setErrors((prev) => ({
       ...prev,
@@ -145,7 +151,7 @@ const Settings = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     let isValid = false
@@ -154,6 +160,26 @@ const Settings = () => {
       isValid = validateProfileForm()
       if (isValid) {
         console.log("Profile form submitted:", formData)
+        const user = await authService.getUser()
+        const role = authService.getRole();
+        // Update the user profile
+        if(role === "Admin"){
+          await axiosInstance.put(`/admin/${user._id}`, {
+            name: formData.name ? formData.name : user.name,
+            email: formData.email? formData.email : user.email,
+            dob: formData.dob ? formData.dob : user.dob,
+            cgpa: formData.cgpa ? formData.cgpa : user.cgpa,
+          })
+        }
+        else{
+          await axiosInstance.put(`/user/${user._id}`, {
+            name: formData.name ? formData.name : user.name,
+            email: formData.email? formData.email : user.email,
+            dob: formData.dob ? formData.dob : user.dob,
+            cgpa: formData.cgpa ? formData.cgpa : user.cgpa,
+          })
+        }
+        toast.success("Profile updated successfully")
       }
     } else if (activeTab === "security") {
       isValid = validateSecurityForm()
@@ -174,15 +200,41 @@ const Settings = () => {
   const handleProfilePictureClick = () => {
     fileInputRef.current?.click()
   }
-
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
+  const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+      // Store the file name or path in formData
+      uploadImage(file).then(async (url:string) => {
+        
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setProfileImage(reader.result as string)
+        }
+        
+        reader.readAsDataURL(file)
+        const user = await authService.getUser()
+        const role = authService.getRole();
+        // Update the profile picture URL
+        if(role === "Admin"){
+           await axiosInstance.put(`/admin/${user._id}`, {
+            picture: url,
+          })
+        }
+        else if(role === "Student"){
+          await axiosInstance.put(`/user/${user._id}`, {
+            picture: url,
+          })
+        }
+        toast.success("Profile picture updated successfully")
+        // Clear any errors
+        setErrors((prevErrors) => ({ ...prevErrors, profilePicture: "" }))
+    }).catch((error) => {
+      console.log("Error uploading image:", error.message)
+      setErrors((prevErrors) => ({ ...prevErrors, profilePicture: error.message }))
+    })
+    }
+    if (file) {
     }
   }
   const navigate = useNavigate();
@@ -248,6 +300,7 @@ const Settings = () => {
                   type="text"
                   id="name"
                   name="name"
+                  placeholder={user?.name}
                   value={formData.name}
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border ${errors.profile.name ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500`}
@@ -264,6 +317,7 @@ const Settings = () => {
                   type="email"
                   id="email"
                   name="email"
+                  placeholder={user?.email}
                   value={formData.email}
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border ${errors.profile.email ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500`}
@@ -281,6 +335,7 @@ const Settings = () => {
                     type="date"
                     id="dob"
                     name="dob"
+                    placeholder={user?.dob}
                     value={formData.dob}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border ${errors.profile.dob ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500`}
@@ -298,6 +353,7 @@ const Settings = () => {
                   type="text"
                   id="cgpa"
                   name="cgpa"
+                  placeholder={user?.cgpa}
                   value={formData.cgpa}
                   onChange={handleInputChange}
                   className={`w-full px-3 py-2 border ${errors.profile.cgpa ? "border-red-500" : "border-gray-300"} rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500`}

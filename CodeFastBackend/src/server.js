@@ -21,6 +21,7 @@ const industryRoutes = require('./routes/IndustryRoutes')
 const suggestionRoutes = require('./routes/SuggestionRoutes')
 const jobRoutes = require('./routes/JobRoutes')
 const SPerformanceController = require('./controllers/SperformanceController')
+const studentJobRoutes = require('./routes/StudentIndustryRoutes')
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
@@ -45,8 +46,7 @@ app.use("/api/industry", industryRoutes);
 app.use("/api/suggestion", suggestionRoutes);
 app.use("/api/jobs", jobRoutes);
 app.get("/api/performance", SPerformanceController.getLeaderboard);
-
-
+app.use("/api/student-job", studentJobRoutes);
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////
 ///////////////////////////////////////////////////

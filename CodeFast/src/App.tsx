@@ -12,9 +12,9 @@ import AdminLayout from "./Layouts/AdminLayout"
 import IndustryLayout from "./Layouts/IndustryLayout"
 
 function App() {
-
   return (
-    <main className="min-h-screen">
+    
+    <main className={`min-h-screen`}>
       <GlobalProvider>
         <ToastContainer />
         <Router>

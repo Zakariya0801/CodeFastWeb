@@ -18,6 +18,8 @@ const quizRoutes = require('./routes/QuizRoutes')
 const studyMaterialRoutes = require('./routes/StudyMaterialRoutes')
 const adminRoutes = require('./routes/AdminRoutes')
 const industryRoutes = require('./routes/IndustryRoutes')
+const jobRoutes = require('./routes/JobRoutes')
+const SPerformanceController = require('./controllers/SperformanceController')
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(
@@ -39,6 +41,9 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/study-materials', studyMaterialRoutes);
 app.post("/api/evaluation", createStudentEvaluation);
 app.use("/api/industry", industryRoutes);
+app.use("/api/jobs", jobRoutes);
+app.get("/api/performance", SPerformanceController.getLeaderboard);
+
 
 ///////////////////////////////////////////////////
 ///////////////PROTECTED ROUTES////////////////////

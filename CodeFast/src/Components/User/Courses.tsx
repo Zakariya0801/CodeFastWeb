@@ -6,6 +6,7 @@ import CourseDetail from "./CourseDetail";
 import { Search, BookOpen, Plus } from "lucide-react";
 import axiosInstance from "../../Utils/axiosInstance";
 import TopBar from "../Shared/Topbar";
+import { useGlobalContext } from "../Auth/GlobalProvider";
 
 
 export interface Course {
@@ -53,6 +54,7 @@ function Courses() {
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
   };
+  const {isDarkMode} = useGlobalContext();
 
   const handleCourseClick = (courseId: number) => {
     const course = courses.find((c) => c._id === courseId);
@@ -175,88 +177,88 @@ function Courses() {
 
   // Otherwise show the course catalog
   return (
-    <>
+    <div className={`h-full ${isDarkMode ? "bg-gray-700" : "bg-white"}`}>
       <TopBar title="Courses" />
-    <div className="container mx-auto px-6 py-12 max-w-7xl">
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Course Catalog</h1>
-        <p className="text-gray-600">Explore your learning journey with our comprehensive course offerings</p>
-      </div>
-
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div className="flex gap-3">
-          <button
-            className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
-              activeFilter === "enrolled"
-                ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
-                : "bg-white border border-gray-300 hover:bg-gray-50"
-            }`}
-            onClick={() => handleFilterClick("enrolled")}
-          >
-            <BookOpen className="w-4 h-4" />
-            Enrolled Courses
-          </button>
-          <button
-            className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
-              activeFilter === "enroll"
-                ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
-                : "bg-white border border-gray-300 hover:bg-gray-50"
-            }`}
-            onClick={() => handleFilterClick("enroll")}
-          >
-            <Plus className="w-4 h-4" />
-            Enroll New Course
-          </button>
-          <button
-            className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
-              activeFilter === "completed"
-                ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
-                : "bg-white border border-gray-300 hover:bg-gray-50"
-            }`}
-            onClick={() => handleFilterClick("completed")}
-          >
-            <BookOpen className="w-4 h-4" />
-            Completed Courses
-          </button>
+      <div className={`container mx-0 w-full px-6 py-12 mb-0 ${isDarkMode ? "text-white" :"text-gray-900"}`}>
+        <div className="mb-10">
+          <h1 className={`text-4xl font-bold mb-2 `}>Course Catalog</h1>
+          <p className={`${isDarkMode ? "text-gray-400" :"text-gray-600"}`}>Explore your learning journey with our comprehensive course offerings</p>
         </div>
 
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="w-4 h-4 text-gray-500" />
+        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 `}>
+          <div className="flex gap-3">
+            <button
+              className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
+                activeFilter === "enrolled"
+                  ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
+                  : `${isDarkMode ? "bg-gray-300" : "bg-white"} border border-gray-300 hover:bg-gray-50 text-black`
+              }`}
+              onClick={() => handleFilterClick("enrolled")}
+            >
+              <BookOpen className="w-4 h-4" />
+              Enrolled Courses
+            </button>
+            <button
+              className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
+                activeFilter === "enroll"
+                  ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
+                  : `${isDarkMode ? "bg-gray-300" : "bg-white"} border border-gray-300 hover:bg-gray-50 text-black`
+              }`}
+              onClick={() => handleFilterClick("enroll")}
+            >
+              <Plus className="w-4 h-4" />
+              Enroll New Course
+            </button>
+            <button
+              className={`px-5 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${
+                activeFilter === "completed"
+                  ? "bg-blue-100 text-blue-700 border border-blue-300 shadow-sm"
+                  : `${isDarkMode ? "bg-gray-300" : "bg-white"} border border-gray-300 hover:bg-gray-50 text-black`
+              }`}
+              onClick={() => handleFilterClick("completed")}
+            >
+              <BookOpen className="w-4 h-4" />
+              Completed Courses
+            </button>
           </div>
-          <input
-            type="text"
-            className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
-            placeholder="Search courses..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
 
-      
-      {activeFilter === "enrolled" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredCourses.map((course) => (
-            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClick(course._id)} />
-          ))}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <Search className="w-4 h-4 text-gray-500" />
+            </div>
+            <input
+              type="text"
+              className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+              placeholder="Search courses..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
-      ) : activeFilter === "enroll" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Unenrolled.map((course) => (
-            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => enrollCourse(course._id)} />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Completed.map((course) => (
-            <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClickCompleted(course._id)} />
-          ))}
-        </div>
-      )}
-      
+
+        
+        {activeFilter === "enrolled" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredCourses.map((course) => (
+              <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClick(course._id)} />
+            ))}
+          </div>
+        ) : activeFilter === "enroll" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Unenrolled.map((course) => (
+              <CourseCard key={course._id} course={course} isSelected={false} onClick={() => enrollCourse(course._id)} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Completed.map((course) => (
+              <CourseCard key={course._id} course={course} isSelected={false} onClick={() => handleCourseClickCompleted(course._id)} />
+            ))}
+          </div>
+        )}
+        
+      </div>
     </div>
-    </>
   );
 }
 

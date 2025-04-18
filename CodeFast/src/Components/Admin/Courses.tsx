@@ -49,8 +49,8 @@ function Courses() {
   };
 
   const handleCourseClick = (courseId: number) => {
-    // const course = courses.find((c) => c._id === courseId);
-    // if (!course) return;
+    const course = courses.find((c) => c._id === courseId);
+    if (!course) return;
     // setSelectedCourse(course);
   };
   

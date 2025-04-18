@@ -6,10 +6,10 @@ const studentIndustrySchema = new mongoose.Schema({
         required: true,
         ref: 'Student'
     },
-    industryId: {
+    jobId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Industry'
+        ref: 'Job'
     },
     request: {
         type: Number,
@@ -23,7 +23,7 @@ const studentIndustrySchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-studentIndustrySchema.index({ studentId: 1, industryId: 1 }, { unique: true });
+studentIndustrySchema.index({ studentId: 1, jobId: 1 }, { unique: true });
 
 const StudentIndustry = mongoose.model('StudentIndustry', studentIndustrySchema);
 module.exports = StudentIndustry;

@@ -28,10 +28,6 @@ const industrySchema = new mongoose.Schema({
             type: String,
             default: ''
     },
-    Jobs: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job'
-    }]
 }, { timestamps: true });
 
 const Industry = mongoose.model('Industry', industrySchema);

@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: MdHome, iconSize: "w-7 h-7" },
   { label: "Internships", href: "/internships", icon: FactoryIcon, iconSize: "w-7 h-7" },
   { label: "Leaderboard", href: "/leaderboard", icon: UserIcon, iconSize: "w-7 h-7" },
-  { label: "Employee Management", href: "/", icon: UsersIcon, iconSize: "w-7 h-7" },
+  { label: "Employee Management", href: "/employee", icon: UsersIcon, iconSize: "w-7 h-7" },
   
 ];
 

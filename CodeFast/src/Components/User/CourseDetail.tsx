@@ -22,7 +22,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz|null>(null)
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const { user } = useGlobalContext();
-  const [getCerificate, setGetCertificate] = useState(false);
   console.log("courseeeeee = ", course)
   // Generate a consistent color based on the course title
   const getColorClass = (title: string) => {
@@ -48,9 +47,6 @@ const CourseDetail: React.FC<CourseDetailProps> = ({ course, onBackClick, onUnen
     setSelectedMaterial(null)
   }
 
-  if(getCerificate) {
-    return <Certificate userName={user?.name} course={course}/>
-  }
   
 
   // If a specific quiz is selected

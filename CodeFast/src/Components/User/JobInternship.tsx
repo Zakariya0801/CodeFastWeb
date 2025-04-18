@@ -131,12 +131,9 @@ function JobInternship() {
     fetchAllJobData()
   }, [])
 
-  // Format salary for display
-  const formatSalary = (salary: number): string => {
-    return salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  }
+  
 
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [_, setJobs] = useState<Job[]>([]);
 
   // Sync jobs initially
   useEffect(() => {

@@ -17,6 +17,9 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
+  const dark = localStorage.getItem("DarkMode");
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(dark && dark === "true" || false);
+  localStorage.setItem("DarkMode", `${isDarkMode ? "true" : "false"}`);
 
   useEffect(() => {
     // Save user to localStorage whenever it changes
@@ -32,6 +35,9 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         user,
         setUser,
+        isDarkMode,
+        setIsDarkMode
+
       }}
     >
       {children}

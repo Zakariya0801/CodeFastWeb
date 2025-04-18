@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Trash2 } from 'lucide-react';
 import axiosInstance from '../../Utils/axiosInstance';
 import { toast } from 'react-toastify';

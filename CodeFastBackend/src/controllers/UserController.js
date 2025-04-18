@@ -54,10 +54,27 @@ const subscribePlan = async (req, res) => {
     try {
         const student = await Student.findById(req.params.id);
         if (!student) return res.status(404).json({ message: 'Student not found' });
-
-        student.subscribedPlan = 1;
-        await student.save();
+        if (student.subscribedPlan !== 1)
+        {
+            student.subscribedPlan = 1;
+            await student.save();
+        }
         res.status(200).json({ message: 'Subscribed successfully', student });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+const unsubscribePlan = async (req, res) => {
+    try {
+        const student = await Student.findById(req.params.id);
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+        if (student.subscribedPlan !== -1)
+        {
+            student.subscribedPlan = -1;
+            await student.save();
+        }
+        res.status(200).json({ message: 'UnSubscribed successfully', student });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -80,6 +97,7 @@ const applyJob = async (req, res) => {
 const CurrentUser = async (req, res) => {
     try {
         const user = req.user;
+        console.log("user = ", user)
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.status(200).json({user});
     } catch (error) {
@@ -117,5 +135,6 @@ module.exports = {
     applyJob,
     CurrentUser,
     CurrentRole,
-    fetchStudentLogs
+    fetchStudentLogs,
+    unsubscribePlan
 };

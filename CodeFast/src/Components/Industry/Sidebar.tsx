@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  SplitSquareHorizontalIcon,
-  UserIcon,
   UsersIcon,
-  FactoryIcon
+  FactoryIcon,
+  UserIcon
 
 } from "lucide-react";
 import { MdHome, MdMenu, MdClose } from "react-icons/md";
@@ -23,7 +22,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: MdHome, iconSize: "w-7 h-7" },
-  { label: "Internships", href: "/", icon: FactoryIcon, iconSize: "w-7 h-7" },
+  { label: "Internships", href: "/internships", icon: FactoryIcon, iconSize: "w-7 h-7" },
+  { label: "Leaderboard", href: "/leaderboard", icon: UserIcon, iconSize: "w-7 h-7" },
   { label: "Employee Management", href: "/", icon: UsersIcon, iconSize: "w-7 h-7" },
   
 ];

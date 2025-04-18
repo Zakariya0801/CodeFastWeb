@@ -135,7 +135,7 @@ function JobInternship() {
     return salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   }
 
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [_, setJobs] = useState<Job[]>([]);
 
   // Sync jobs initially
   useEffect(() => {

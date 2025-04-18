@@ -1,5 +1,6 @@
 const PerformanceLog = require('../models/SPerformanceLog');
 const Student = require('../models/UserModel');
+const CourseRegistration = require('../models/CourseRegistrationModel');
 const mongoose = require('mongoose');
 const addPerformanceLog = async (Student_id, performance) => {
     try {
@@ -67,8 +68,29 @@ const getPerformanceLogs = async (Student_id) => {
         return [{message:'No Performance Log Found3'}];
     }
 };
+const getLeaderboard = async (req, res) => {
+    try {
+        const allStudents = await Student.find({}).sort({ sPerformance: -1 }).populate('university', 'name');
+        const courseRegistrations = await CourseRegistration.find({}).populate('courseId', 'name');
+
+        const leaderboard = allStudents.map(student => ({
+            _id: student._id,
+            name: student.name,
+            cgpa: student.cgpa,
+            sPerformance: student.sPerformance,
+            university: student.university ? student.university.name : 'N/A',
+            picture: student.picture || 'default.jpg', // Provide a default picture if none exists
+            courses: courseRegistrations.filter(reg => reg.studentId.toString() === student._id.toString()).map(reg => reg.courseId.name),
+        }));
+        res.status(200).json(leaderboard);
+    } catch (error) {
+        console.log("error = ", error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
 
 module.exports = {
     addPerformanceLog,
-    getPerformanceLogs
+    getPerformanceLogs,
+    getLeaderboard
 };

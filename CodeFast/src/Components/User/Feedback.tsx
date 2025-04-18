@@ -7,29 +7,30 @@ import authService from "../Auth/authService"
 import { useEffect } from "react"
 import axiosInstance from "../../Utils/axiosInstance"
 import { toast } from "react-toastify"
+import { useGlobalContext } from "../Auth/GlobalProvider"
 
 const Feedback = () => {
+  const { isDarkMode } = useGlobalContext()
   const [activeTab, setActiveTab] = useState<"feedback" | "suggestions">("feedback")
   const [performanceScore, setPerformanceScore] = useState<number>(0)
   const [suggestionType, setSuggestionType] = useState<string>("")
   const [suggestionDescription, setSuggestionDescription] = useState<string>("")
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<any>()
 
   const getUser = async () => {
-    setUser(await authService.getUser());
+    setUser(await authService.getUser())
   }
 
   const name = user?.name || "User"
-  
 
   useEffect(() => {
-    setPerformanceScore(user?.sPerformance || 0);
-  }, [user]);
+    setPerformanceScore(user?.sPerformance || 0)
+  }, [user])
 
   useEffect(() => {
-    getUser();
-  }, []);
+    getUser()
+  }, [])
 
   // Function to get feedback based on performance score
   const getFeedbackContent = (score: number) => {
@@ -148,16 +149,22 @@ CodeFAST Evaluation Team`,
   const feedback = getFeedbackContent(performanceScore)
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4">
+    <div
+      className={`min-h-screen p-4 transition-colors duration-200 ${isDarkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"}`}
+    >
       <TopBar title="Feedback" />
       <div className="mt-10 mx-auto max-w-5xl">
         {/* Tabs */}
-        <div className="flex mb-6 border-b border-gray-200">
+        <div className={`flex mb-6 border-b ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
           <button
             className={`flex items-center px-6 py-3 font-medium text-sm ${
               activeTab === "feedback"
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-gray-500 hover:text-gray-700"
+                ? isDarkMode
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-blue-600 border-b-2 border-blue-600"
+                : isDarkMode
+                  ? "text-gray-400 hover:text-gray-300"
+                  : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setActiveTab("feedback")}
           >
@@ -165,10 +172,14 @@ CodeFAST Evaluation Team`,
             Student Feedback
           </button>
           <button
-            className={`flex items-center px-6 py-3 font-medium text-sm ${
+            className={`flex items-center px-6 py-3 font-medium text-sm whitespace-nowrap ${
               activeTab === "suggestions"
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-gray-500 hover:text-gray-700"
+                ? isDarkMode
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-blue-600 border-b-2 border-blue-600"
+                : isDarkMode
+                  ? "text-gray-400 hover:text-gray-300"
+                  : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setActiveTab("suggestions")}
           >
@@ -178,54 +189,83 @@ CodeFAST Evaluation Team`,
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <div
+          className={`rounded-lg shadow-sm p-6 border ${
+            isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+          }`}
+        >
           {activeTab === "feedback" ? (
             <div>
               <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Your Performance Feedback</h2>
+                <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  Your Performance Feedback
+                </h2>
                 <div className="flex items-center mb-4">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div className={`w-full rounded-full h-2.5 ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}>
                     <div
-                      className="bg-blue-600 h-2.5 rounded-full"
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
                       style={{ width: `${(performanceScore / 4) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="ml-3 text-sm font-medium text-gray-700">{performanceScore.toFixed(1)}/4</span>
+                  <span className={`ml-3 text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    {performanceScore.toFixed(1)}/4
+                  </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-500">0</span>
-                  <span className="text-xs text-gray-500">1</span>
-                  <span className="text-xs text-gray-500">2</span>
-                  <span className="text-xs text-gray-500">3</span>
-                  <span className="text-xs text-gray-500">4</span>
+                  <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>0</span>
+                  <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>1</span>
+                  <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>2</span>
+                  <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>3</span>
+                  <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>4</span>
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{feedback.subject}</h3>
-                <div className="whitespace-pre-line text-gray-700">{feedback.content}</div>
+              <div
+                className={`p-6 rounded-lg border ${
+                  isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
+                }`}
+              >
+                <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  {feedback.subject}
+                </h3>
+                <div className={`whitespace-pre-line ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  {feedback.content}
+                </div>
               </div>
             </div>
           ) : (
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">Submit Your Suggestions</h2>
+              <h2 className={`text-xl font-semibold mb-6 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                Submit Your Suggestions
+              </h2>
 
               {submitSuccess && (
-                <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 font-medium rounded-lg shadow-lg">
+                <div
+                  className={`mb-6 p-4 border-l-4 rounded-lg shadow-lg ${
+                    isDarkMode
+                      ? "bg-green-900/30 border-green-500 text-green-300"
+                      : "bg-green-50 border-green-500 text-green-700"
+                  } font-medium`}
+                >
                   <span>Your suggestion has been submitted successfully. Thank you for your valuable feedback!</span>
                 </div>
               )}
 
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="suggestionType" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="suggestionType"
+                    className={`block text-sm font-medium mb-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Type of Suggestion
                   </label>
                   <select
                     id="suggestionType"
                     value={suggestionType}
                     onChange={(e) => setSuggestionType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      isDarkMode ? "bg-gray-700 border-gray-600 text-white" : "border border-gray-300 text-gray-900"
+                    }`}
                     required
                   >
                     <option value="">Select a type</option>
@@ -238,7 +278,10 @@ CodeFAST Evaluation Team`,
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="description"
+                    className={`block text-sm font-medium mb-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Description
                   </label>
                   <textarea
@@ -246,7 +289,11 @@ CodeFAST Evaluation Team`,
                     value={suggestionDescription}
                     onChange={(e) => setSuggestionDescription(e.target.value)}
                     rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      isDarkMode
+                        ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                        : "border border-gray-300 text-gray-900 placeholder-gray-400"
+                    }`}
                     placeholder="Please provide details about your suggestion or improvement idea..."
                     required
                   ></textarea>
@@ -255,7 +302,9 @@ CodeFAST Evaluation Team`,
                 <button
                   onClick={handleSubmitSuggestion}
                   disabled={!suggestionType || !suggestionDescription}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    isDarkMode ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
                 >
                   Submit Suggestion
                 </button>

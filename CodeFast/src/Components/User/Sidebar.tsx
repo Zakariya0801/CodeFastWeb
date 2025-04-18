@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { CalendarIcon, SplitSquareHorizontalIcon, UserIcon, UsersIcon } from "lucide-react"
+import { CalendarIcon, SplitSquareHorizontalIcon, UserIcon } from 'lucide-react'
 import { MdHome, MdMenu, MdClose } from "react-icons/md"
 import { CiMenuBurger, CiMenuFries } from "react-icons/ci"
 import type { IconType } from "react-icons"
@@ -23,7 +23,6 @@ const navItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: MdHome, iconSize: "w-7 h-7" },
   { label: "Courses", href: "/courses", icon: UserIcon, iconSize: "w-7 h-7" },
   { label: "Account", href: "/account", icon: CalendarIcon, iconSize: "w-7 h-7" },
-  { label: "Career", href: "/career", icon: UsersIcon, iconSize: "w-7 h-7" },
   { label: "Job/Internship", href: "/job-internship", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
   { label: "Feedback", href: "/feedback", icon: SplitSquareHorizontalIcon, iconSize: "w-7 h-7" },
 ]
@@ -61,7 +60,7 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   const logoColor = isDarkMode ? "text-gray-200" : "text-gray-800"
 
   return (
-    <div className="max-h-screen flex">
+    <div className="h-screen flex">
       {/* Sidebar Toggle Button (Only for lg and above) */}
       {isLargeScreen && (
         <button
@@ -94,23 +93,27 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
             animate={{ x: 0 }}
             exit={{ x: isLargeScreen ? 0 : -250 }}
             transition={{ duration: 0.3 }}
-            className={` ${sidebarBg} shadow-md z-40 transition-all duration-300 fixed lg:relative border-r ${borderColor}
+            className={`${sidebarBg} shadow-md z-40 transition-all duration-300 fixed lg:relative border-r ${borderColor}
             ${isLargeScreen ? (isMinimized ? "w-20" : "w-64") : "w-64"}
-            `}
+            h-screen flex flex-col`}
           >
             {/* Sidebar Header */}
-            <div className={`flex items-center justify-between p-4 ${headerBg}`}>
-              {!isMinimized && (
-                <div className="flex items-center ml-15 gap-2">
-                  <img src="../../../logo.jpg" alt="CodeFast Logo" className="h-10 w-10" />
+            <div className={`flex items-center justify-center p-4 ${headerBg}`}>
+              {!isMinimized ? (
+                <div className="flex items-center gap-2">
+                  <img src="../../../logo.jpg" alt="CodeFast Logo" className="h-10 w-10 rounded-md" />
                   <span className={`font-bold text-2xl ${logoColor}`}>CodeFast</span>
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <img src="../../../logo.jpg" alt="CodeFast Logo" className="h-10 w-10 rounded-md" />
                 </div>
               )}
             </div>
-            <div className={`${headerBg} p-5`}></div>
+            <div className={`${headerBg} p-2`}></div>
 
             {/* Navigation Links */}
-            <nav className={`flex flex-col h-full gap-5 px-3 ${navBg} py-4`}>
+            <nav className={`flex flex-col flex-grow gap-5 px-3 ${navBg} py-4 overflow-y-auto`}>
               {navItems.map((item) => {
                 const isActive = activeItem === item.label
                 return (
@@ -139,6 +142,11 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
                 )
               })}
             </nav>
+
+            {/* Footer */}
+            <div className={`p-4 ${headerBg} border-t ${borderColor} text-center text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+              © {new Date().getFullYear()} CodeFast
+            </div>
           </motion.aside>
         )}
       </AnimatePresence>

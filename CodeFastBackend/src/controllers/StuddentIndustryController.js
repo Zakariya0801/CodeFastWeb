@@ -90,6 +90,24 @@ const updateStatus = async (req, res) => {
 };
 
 
+const updateRequest = async (req, res) => {
+    try {
+        const { studentId, jobId } = req.params;
+        const { request } = req.body;
+
+        const updated = await StudentIndustry.findOneAndUpdate(
+            { studentId, jobId },
+            { request },
+            { new: true }
+        );
+
+        if (!updated) return res.status(404).json({ message: 'Relation not found' });
+        res.status(200).json({ message: 'Request updated', data: updated });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const deleteStudentIndustry = async (req, res) => {
     try {
         const { studentId, jobId } = req.params;
@@ -109,5 +127,6 @@ module.exports = {
     applyJob,
     approachStudent,
     updateStatus,
+    updateRequest,
     deleteStudentIndustry
 };

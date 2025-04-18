@@ -5,6 +5,7 @@ const studentIndustryController = require('../controllers/StuddentIndustryContro
 router.post('/apply', studentIndustryController.applyJob);
 router.post('/approach', studentIndustryController.approachStudent);
 router.put('/:studentId/:jobId/status', studentIndustryController.updateStatus);
+router.put('/:studentId/:jobId/request', studentIndustryController.updateRequest);
 router.get('/', studentIndustryController.getAllStudentIndustry);
 router.delete('/:studentId/:jobId', studentIndustryController.deleteStudentIndustry);
 router.get('/:studentId/:jobId', studentIndustryController.getStudentIndustryById);

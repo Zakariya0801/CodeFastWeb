@@ -10,12 +10,9 @@ const {
 const { createQuiz, getAllQuizzes, getQuizById } = require('../controllers/QuizController');
 const {createStudentEvaluation,getStudentEvaluation} = require("../controllers/EvaluationController");
 //Course routes
-<<<<<<< HEAD
 
-=======
 router.get("/evaluation", protect, getStudentEvaluation);
 router.post("/evaluation", protect , createStudentEvaluation);
->>>>>>> c5d238a54e02993a7e1d45f24e66a9eca5865565
 router.get('/', getAllCourse);
 router.post('/', protect, authorize("Admin"), AddCourse);
 router.get("/registrations", protect, getRegistrations);

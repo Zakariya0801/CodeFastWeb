@@ -54,7 +54,14 @@ const applyToJob = async (req, res) => {
  const avaliableJobs = async (req, res) => {
     try {
         const studentId = req.user._id;
-        const jobs = await StudentIndustry.find({ studentId, request: -1 }).populate('jobId');
+        const jobs = await StudentIndustry.find({ studentId, request: -1 })
+                      .populate({
+                        path: 'jobId',
+                        populate: {
+                          path: 'industry',
+                        },
+                      });
+        console.log("jobs = ", jobs)
         if (!jobs) return res.status(404).json({ message: 'Jobs not found' });
         res.status(200).json({message: 'Jobs avaliable', jobs});
     }
@@ -66,7 +73,12 @@ const applyToJob = async (req, res) => {
   const appliedJobs = async (req, res) => {
     try {
         const studentId = req.user._id;
-        const jobs = await StudentIndustry.find({ studentId, request: 0 }).populate('jobId');;
+        const jobs = await StudentIndustry.find({ studentId, request: 0 }).populate({
+          path: 'jobId',
+          populate: {
+            path: 'industry',
+          },
+        });
         if (!jobs) return res.status(404).json({ message: 'Jobs not found' });
         res.status(200).json({message: 'Jobs applied', jobs});
     }
@@ -78,7 +90,12 @@ const applyToJob = async (req, res) => {
   const offeredJobs = async (req, res) => {
     try {
         const studentId = req.user._id;
-        const jobs = await StudentIndustry.find({ studentId, request: 1 }).populate('jobId');;
+        const jobs = await StudentIndustry.find({ studentId, request: 1 }).populate({
+          path: 'jobId',
+          populate: {
+            path: 'industry',
+          },
+        });
         if (!jobs) return res.status(404).json({ message: 'Jobs not found' });
         res.status(200).json({message: 'Jobs offered', jobs});
     }
@@ -90,7 +107,12 @@ const applyToJob = async (req, res) => {
   const ongoingJobs = async (req, res) => {
     try{
         const studentId = req.user._id;
-        const jobs= await StudentIndustry.find({ studentId, status:1}).populate('jobId');;
+        const jobs= await StudentIndustry.find({ studentId, status:1}).populate({
+          path: 'jobId',
+          populate: {
+            path: 'industry',
+          },
+        });
         if (!jobs) return res.status(404).json({ message: 'Jobs not found' });
         res.status(200).json({message: 'Jobs ongoing', jobs});
     }

@@ -60,7 +60,7 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
   const logoColor = isDarkMode ? "text-gray-200" : "text-gray-800"
 
   return (
-    <div className="h-screen flex">
+    <div className=" flex">
       {/* Sidebar Toggle Button (Only for lg and above) */}
       {isLargeScreen && (
         <button
@@ -95,7 +95,7 @@ const MySidebar: React.FC<{ route: RouteKeys }> = ({ route }) => {
             transition={{ duration: 0.3 }}
             className={`${sidebarBg} shadow-md z-40 transition-all duration-300 fixed lg:relative border-r ${borderColor}
             ${isLargeScreen ? (isMinimized ? "w-20" : "w-64") : "w-64"}
-            h-screen flex flex-col`}
+            h-full flex flex-col`}
           >
             {/* Sidebar Header */}
             <div className={`flex items-center justify-center p-4 ${headerBg}`}>

@@ -37,7 +37,7 @@ const Signup = () => {
     agreeTerms: false,
   })
   const [universities, setUniversities] = useState<any[]>([])
-  const [SelectedUniversity,setselectedUniversity] = useState<any>(null);
+  const [_,setselectedUniversity] = useState<any>(null);
   const getUniversties = async () => {
     const response = await axiosInstance.get("/university")
     setUniversities(response.data)

@@ -144,7 +144,7 @@ const StudyMaterialDetail: React.FC<StudyMaterialDetailProps> = ({ material, cou
                         text: `Check out this study material: ${material} for ${courseTitle}`,
                         url: shareUrl,
                       })
-                      .catch((err) => {
+                      .catch((_) => {
                         // Fallback to copying to clipboard
                         copyToClipboard(shareUrl)
                       })

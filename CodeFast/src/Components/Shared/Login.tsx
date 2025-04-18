@@ -5,7 +5,6 @@ import axiosInstance from '../../Utils/axiosInstance';
 import { toast } from 'react-toastify';
 import authService from '../Auth/authService';
 import { useGlobalContext } from '../Auth/GlobalProvider';
-import { navigateByRole } from '../../Utils/authGuard';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

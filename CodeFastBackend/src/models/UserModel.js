@@ -32,7 +32,8 @@ const StudentSchema = new mongoose.Schema({
     sPerformance: {
         type: Number,
         min: 0.0,
-        max: 4.0
+        max: 4.0,
+        default: 0.0
     },
     subscribedPlan: {
         type: Number,

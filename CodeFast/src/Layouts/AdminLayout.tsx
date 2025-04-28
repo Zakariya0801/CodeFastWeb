@@ -5,6 +5,7 @@ import Courses from "../Components/Admin/Courses";
 import UserManagement from "../Components/Admin/UserManagement";
 import Requests from "../Components/Admin/Requests";
 import Feedback from "../Components/Admin/Feedback";
+import IndustryManagement from "../Components/Admin/IndustryManagement";
 
 const AdminLayout: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const AdminLayout: React.FC = () => {
           <Route path="/requests" element={<Requests />} />
           <Route path="/user-management" element={<UserManagement />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/industry" element={<IndustryManagement />} />
         </Routes>
       </div>
     </div>

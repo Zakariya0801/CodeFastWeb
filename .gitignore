@@ -24,3 +24,5 @@
 */*.sw?
 
 */.env
+*/**/*.d.ts
+CodeFast/**/*.js

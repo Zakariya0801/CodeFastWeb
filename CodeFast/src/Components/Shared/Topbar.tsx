@@ -27,10 +27,12 @@ export default function TopBar({ title }: ITopbar) {
   }
 
   const getPic = async () => {
-    const pi = await fetch(`${user?.picture}`)
-    console.log("pic = ", pi)
-    setPic(pi.url)
-    return pi
+    try{const pi = await fetch(`${user?.picture}`)
+      console.log("pic = ", pi)
+      setPic(pi.url)
+    }catch(err){
+      setPic("/placeholder.svg")
+    }
   }
 
   useEffect(() => {

@@ -72,7 +72,7 @@ function Dashboard() {
                   </div>
                   <div>
                     <p className="text-blue-200 text-xs uppercase tracking-wider mb-1">Student Performance</p>
-                    <p className="text-lg font-medium">{user?.sPerformance || "N/A"}</p>
+                    <p className="text-lg font-medium">{user?.sPerformance.toFixed(2) || "N/A"}</p>
                   </div>
                 </div>
               </div>

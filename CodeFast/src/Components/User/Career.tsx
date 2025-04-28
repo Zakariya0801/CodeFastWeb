@@ -4,7 +4,7 @@ function Career() {
   return (
     <div>
         <TopBar title="Career"/>
-        <p>Career</p>
+        <p></p>
     </div>
   )
 }

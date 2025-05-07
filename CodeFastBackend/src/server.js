@@ -44,7 +44,7 @@ app.use("/api/course", courseRouter);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/study-materials', studyMaterialRoutes);
 app.post("/api/evaluation", createStudentEvaluation);
-app.use("/api/industry", industryRoutes);
+app.use("/api/industry", protect, industryRoutes);
 app.use("/api/suggestion", suggestionRoutes);
 app.use("/api/jobs", jobRoutes);
 app.get("/api/performance", SPerformanceController.getLeaderboard);

@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "../Components/Industry/Dashboard";
 import Internships from "../Components/Industry/Internships";
 import StudentLeaderboard from "../Components/Industry/LeaderBoard";
+import EmployeeManagement from "../Components/Industry/EmployeesManagement";
 
 
 const IndustryLayout: React.FC = () => {
@@ -13,7 +14,7 @@ const IndustryLayout: React.FC = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/internships" element={<Internships />} />
           <Route path="/leaderboard" element={<StudentLeaderboard />} />
-          
+          <Route path="/employees" element={<EmployeeManagement />} />
         </Routes>
       </div>
     </div>

@@ -5,6 +5,7 @@ const Industry = require('../models/IndustryModel'); // Ensure correct path
 const jwt = require('jsonwebtoken');
 const protect = async (req, res, next) => {
     try {
+      console.log("protecting")
       // Check if token exists in headers
       const token = req.header("Authorization")?.replace("Bearer ", "");
       if (!token) {
@@ -36,6 +37,7 @@ const protect = async (req, res, next) => {
   
       // Add user to request object
       req.user = user;
+      console.log("user = ", user)
       next();
     } catch (error) {
       console.log("error = ", error)

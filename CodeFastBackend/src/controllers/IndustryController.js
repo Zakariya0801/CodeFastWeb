@@ -1,5 +1,7 @@
 const Industry = require('../models/IndustryModel');
 const bcrypt = require('bcryptjs');
+const Job = require('../models/JobModel');
+const StudentIndustry = require('../models/Student-IndustryModel');
 
 const createIndustry = async (req, res) => {
     try {
@@ -62,10 +64,51 @@ const deleteIndustry = async (req, res) => {
     }
 }
 
+const getInterns = async (req, res) => {
+    try {
+        console.log("getInterns")
+        const id = req.user._id
+        const industry = await Industry.findById(id);
+        if (!industry) {
+            return res.status(404).json({ message: 'Industry not found' });
+        }
+        // get all jobs of industry
+        const jobs = await Job.find({ industry: id });
+        const jobIds = jobs.map(job => job._id);
+        // get all interns of jobs
+        const interns = await StudentIndustry.find({ jobId: { $in: jobIds } }).populate({
+            path: 'studentId',
+            populate: {
+                path: 'university'
+            }
+        }).populate('jobId');
+        // get all students of interns
+        res.status(200).json({ interns: interns.filter(intern => intern.studentId) });
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({ message: 'Error fetching interns', error });
+    }
+}
+
+const deleteIntern = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const intern = await StudentIndustry.findByIdAndDelete(id);
+        if (!intern) {
+            return res.status(404).json({ message: 'Intern not found' });
+        }
+        res.status(200).json({ message: 'Intern deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ message: 'Error deleting intern', error });
+    }
+}
 module.exports = {
     createIndustry,
     getAllIndustries,
     getIndustryById,
     updateIndustry,
-    deleteIndustry
+    deleteIndustry,
+    getInterns,
+    deleteIntern
 };

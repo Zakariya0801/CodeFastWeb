@@ -31,6 +31,7 @@ interface Job {
   location: string
   status: string // 'OPEN' or 'CLOSED'
   salary: number
+  jobId: any
   industry: {
     _id: string
     name: string
@@ -44,7 +45,7 @@ interface StudentIndustry {
   _id: string
   studentId: string
   industryId: string
-  jobId: string
+  jobId: any
   request: number // -1 = Not applied, 0 = Student Applied, 1 = Industry Approached Student
   status: number // 1 = Accepted, 0 = Pending, -1 = Rejected
   job: Job
@@ -66,7 +67,7 @@ interface JobDisplay {
     name: string
   }
   studentId?: string
-  jobId?: string
+  jobId?: any
   request?: number
   applicationStatus?: number
 }
@@ -130,12 +131,9 @@ function JobInternship() {
     fetchAllJobData()
   }, [])
 
-  // Format salary for display
-  const formatSalary = (salary: number): string => {
-    return salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  }
+  
 
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [_, setJobs] = useState<Job[]>([]);
 
   // Sync jobs initially
   useEffect(() => {
@@ -180,44 +178,24 @@ function JobInternship() {
       const availableJobsData = availableRes.data.jobs || []
       const formattedAvailableJobs = availableJobsData.map((job: Job) => ({
         ...job,
-        salary: formatSalary(job.salary),
+        salary: `Rs. ${job.jobId.salary}k`,
       }))
       setAvailableJobs(formattedAvailableJobs)
-
+      
       // Process applied jobs
       console.log(appliedRes.data)
       const appliedJobsData = appliedRes.data.jobs || []
-      const formattedAppliedJobs = appliedJobsData.map((item: StudentIndustry) => ({
-        _id: item._id,
-        studentIndustryId: item._id,
-        title: item.job.title,
-        description: item.job.description,
-        location: item.job.location,
-        status: item.job.status,
-        salary: formatSalary(item.job.salary),
-        industry: item.job.industry,
-        studentId: item.studentId,
-        jobId: item.jobId,
-        request: item.request,
-        applicationStatus: item.status,
+      const formattedAppliedJobs = appliedJobsData.map((job: Job) => ({
+        ...job,
+        salary: `Rs. ${job.jobId.salary}k`,
       }))
       setAppliedJobs(formattedAppliedJobs)
 
       // Process offered jobs
       const offeredJobsData = offeredRes.data.jobs || []
-      const formattedOfferedJobs = offeredJobsData.map((item: StudentIndustry) => ({
-        _id: item._id,
-        studentIndustryId: item._id,
-        title: item.job.title,
-        description: item.job.description,
-        location: item.job.location,
-        status: item.job.status,
-        salary: formatSalary(item.job.salary),
-        industry: item.job.industry,
-        studentId: item.studentId,
-        jobId: item.jobId,
-        request: item.request,
-        applicationStatus: item.status,
+      const formattedOfferedJobs = offeredJobsData.map((job: Job) => ({
+        ...job,
+        salary: `Rs. ${job.jobId.salary}k`,
       }))
       setOfferedJobs(formattedOfferedJobs)
 
@@ -230,7 +208,7 @@ function JobInternship() {
         description: item.job.description,
         location: item.job.location,
         status: item.job.status,
-        salary: formatSalary(item.job.salary),
+        salary: `Rs. ${item.job.jobId.salary}k`,
         industry: item.job.industry,
         studentId: item.studentId,
         jobId: item.jobId,
@@ -357,7 +335,7 @@ function JobInternship() {
       case "available":
         return (
           <button
-            onClick={() => handleApplyJob(job._id)}
+            onClick={() => handleApplyJob(job.jobId._id)}
             className={`px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-md transition-colors flex items-center gap-1 sm:gap-2 ${
               isDarkMode ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-600 hover:bg-blue-700"
             } text-white`}
@@ -422,6 +400,7 @@ function JobInternship() {
 
   // Render mobile card view for each job
   const renderMobileJobCard = (job: JobDisplay) => {
+    console.log("job = ", job)
     return (
       <div
         key={job._id}
@@ -449,7 +428,7 @@ function JobInternship() {
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-sm">
             <FaBuilding className={isDarkMode ? "text-gray-400" : "text-gray-500"} />
-            <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>{job.industry.name}</span>
+            <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>{job.jobId.industry.name}</span>
           </div>
 
           <div className="flex items-center gap-2 text-sm">
@@ -674,30 +653,30 @@ function JobInternship() {
                         >
                           <td className="px-4 py-4 whitespace-nowrap">
                             <div className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                              {job.industry.name}
+                              {job.jobId.industry.name}
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <div className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-                              {job.title}
+                              {job.jobId.title}
                             </div>
                           </td>
                           <td className="px-4 py-4">
                             <div
                               className={`text-sm max-w-xs truncate ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}
                             >
-                              {job.description}
+                              {job.jobId.description}
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>
-                              {job.location}
+                              {job.jobId.location}
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                job.status === "OPEN"
+                                job.jobId.status === "OPEN"
                                   ? isDarkMode
                                     ? "bg-green-800 text-green-200"
                                     : "bg-green-100 text-green-800"
@@ -706,7 +685,7 @@ function JobInternship() {
                                     : "bg-red-100 text-red-800"
                               }`}
                             >
-                              {getJobStatusDisplay(job.status)}
+                              {getJobStatusDisplay(job.jobId.status)}
                             </span>
                           </td>
                           {activeTab !== "available" && (
